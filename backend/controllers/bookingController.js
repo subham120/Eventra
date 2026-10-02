@@ -77,7 +77,7 @@ const cancelBooking = async (req, res) => {
     }
 
     // Ownership check: User can only cancel their own bookings
-    if (booking.user.toString() !== req.user.userId) {
+    if (!booking.user || booking.user.toString() !== req.user.userId) {
       return res.status(403).json({ message: "You can only cancel your own bookings" });
     }
 

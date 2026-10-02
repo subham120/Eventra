@@ -128,7 +128,7 @@ const updateEvent = async (req, res) => {
     }
 
     // Ownership check: Ensure only the event organizer can update it
-    if (event.organizer.toString() !== req.user.userId) {
+    if (!event.organizer || event.organizer.toString() !== req.user.userId) {
       return res.status(403).json({ message: "You can only edit your own events" });
     }
 
@@ -142,8 +142,8 @@ const updateEvent = async (req, res) => {
 
     if (req.body.availableTickets !== undefined) {
       const numericTickets = Number(req.body.availableTickets);
-      if (isNaN(numericTickets) || numericTickets <= 0) {
-        return res.status(400).json({ message: "Available tickets must be greater than 0" });
+      if (isNaN(numericTickets) || numericTickets < 0) {
+        return res.status(400).json({ message: "Available tickets cannot be negative" });
       }
     }
 
@@ -178,7 +178,7 @@ const deleteEvent = async (req, res) => {
     }
 
     // Ownership check: Ensure only the event organizer can delete it
-    if (event.organizer.toString() !== req.user.userId) {
+    if (!event.organizer || event.organizer.toString() !== req.user.userId) {
       return res.status(403).json({ message: "You can only delete your own events" });
     }
 

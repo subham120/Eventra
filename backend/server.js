@@ -30,6 +30,11 @@ app.use("/api/events", eventRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/bookings", bookingRoutes);
 
+// Catch-all 404 handler for unknown routes (returns JSON instead of Express HTML)
+app.use((req, res) => {
+  res.status(404).json({ message: "Route not found" });
+});
+
 // Validate required environment variables
 const PORT = process.env.PORT || 5000;
 
