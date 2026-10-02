@@ -1,8 +1,8 @@
 import axios from 'axios'
 import { getToken, logout } from './auth'
 
-// Base URL for backend API (change this when deploying to production)
-const API_URL = 'http://localhost:5000/api'
+// Base URL for backend API (uses VITE_API_URL if configured, otherwise defaults to localhost)
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
 
 // Axios instance configured with base URL and timeout
 const api = axios.create({
