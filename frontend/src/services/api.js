@@ -45,6 +45,9 @@ export function getErrorMessage(err) {
   if (err.response.status === 401) {
     return 'Please log in to continue.'
   }
+  if (err.response.status === 403) {
+    return "You don't have permission to do that."
+  }
   if (err.response.status === 404) {
     return 'Not found.'
   }

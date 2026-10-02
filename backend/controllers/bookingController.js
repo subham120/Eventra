@@ -18,14 +18,20 @@ const createBooking = async (req, res) => {
     }
 
     // Check if the event exists
-    const event = await Event.findById(eventId);
-    if (!event) {
+    const existingEvent = await Event.findById(eventId);
+    if (!existingEvent) {
       return res.status(404).json({ message: "Event not found" });
     }
 
-    // Check ticket availability
-    if (event.availableTickets < quantity) {
-      return res.status(400).json({ message: `Only ${event.availableTickets} tickets available` });
+    // Atomically decrement tickets to prevent race conditions and overselling
+    const event = await Event.findOneAndUpdate(
+      { _id: eventId, availableTickets: { $gte: quantity } },
+      { $inc: { availableTickets: -quantity } },
+      { returnDocument: 'after' }
+    );
+
+    if (!event) {
+      return res.status(400).json({ message: "Not enough tickets available" });
     }
 
     // Calculate total price server-side; user ID comes strictly from the verified JWT token
@@ -37,10 +43,6 @@ const createBooking = async (req, res) => {
       quantity,
       totalAmount,
     });
-
-    // Deduct booked tickets from event and save
-    event.availableTickets -= quantity;
-    await event.save();
 
     return res.status(201).json(booking);
   } catch (error) {

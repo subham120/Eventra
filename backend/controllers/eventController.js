@@ -132,26 +132,28 @@ const updateEvent = async (req, res) => {
       return res.status(403).json({ message: "You can only edit your own events" });
     }
 
+    // Exclude organizer from update data to prevent ownership changes
+    const { organizer, ...updateData } = req.body || {};
+
     // Validate price and tickets if provided
-    if (req.body.price !== undefined) {
+    if (req.body?.price !== undefined) {
       const numericPrice = Number(req.body.price);
       if (isNaN(numericPrice) || numericPrice < 0) {
         return res.status(400).json({ message: "Price cannot be negative" });
       }
+      updateData.price = numericPrice;
     }
 
-    if (req.body.availableTickets !== undefined) {
+    if (req.body?.availableTickets !== undefined) {
       const numericTickets = Number(req.body.availableTickets);
       if (isNaN(numericTickets) || numericTickets < 0) {
         return res.status(400).json({ message: "Available tickets cannot be negative" });
       }
+      updateData.availableTickets = numericTickets;
     }
 
-    // Exclude organizer from update data to prevent ownership changes
-    const { organizer, ...updateData } = req.body;
-
     const updatedEvent = await Event.findByIdAndUpdate(req.params.id, updateData, {
-      new: true,
+      returnDocument: 'after',
       runValidators: true,
     });
 
