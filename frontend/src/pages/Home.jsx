@@ -8,7 +8,7 @@ import OrganizerCTA from '../components/OrganizerCTA'
 import Loading from '../components/Loading'
 import ErrorMessage from '../components/ErrorMessage'
 import { categories } from '../data/categories'
-import { getEvents } from '../services/api'
+import { getEvents, getErrorMessage } from '../services/api'
 
 // Home page: Landing page with hero banner, quick category links, featured events, and organizer CTA
 export default function Home() {
@@ -28,7 +28,7 @@ export default function Home() {
         const data = await getEvents()
         setEvents(data)
       } catch (err) {
-        setError('Unable to load events. Please try again.')
+        setError(getErrorMessage(err))
       } finally {
         setLoading(false)
       }

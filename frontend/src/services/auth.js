@@ -20,7 +20,7 @@ export function getUser() {
 
   try {
     return JSON.parse(userStr)
-  } catch (error) {
+  } catch {
     return null
   }
 }

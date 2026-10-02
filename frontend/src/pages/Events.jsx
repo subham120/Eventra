@@ -7,7 +7,7 @@ import EventCard from '../components/EventCard'
 import Pagination from '../components/Pagination'
 import Loading from '../components/Loading'
 import ErrorMessage from '../components/ErrorMessage'
-import { getEvents } from '../services/api'
+import { getEvents, getErrorMessage } from '../services/api'
 
 // Events page: Search, filter, and paginate through events fetched from MongoDB
 export default function Events() {
@@ -34,7 +34,7 @@ export default function Events() {
         const data = await getEvents()
         setEvents(data)
       } catch (err) {
-        setError('Unable to load events. Please try again.')
+        setError(getErrorMessage(err))
       } finally {
         setLoading(false)
       }

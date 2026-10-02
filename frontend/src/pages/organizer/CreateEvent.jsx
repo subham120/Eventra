@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Lock, ShieldAlert } from 'lucide-react'
 import { getUser } from '../../services/auth'
-import { createEvent } from '../../services/api'
+import { createEvent, getErrorMessage } from '../../services/api'
 import EventForm from '../../components/EventForm'
 
 // CreateEvent page: Allows organizers to publish a new event
@@ -64,7 +64,7 @@ export default function CreateEvent() {
       await createEvent(formData)
       navigate('/organizer')
     } catch (err) {
-      setErrorMessage(err.response?.data?.message || 'Unable to create event. Please try again.')
+      setErrorMessage(getErrorMessage(err))
     } finally {
       setSubmitting(false)
     }

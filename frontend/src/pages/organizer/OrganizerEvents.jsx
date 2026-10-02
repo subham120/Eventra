@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { PlusCircle, Calendar, MapPin, Clock, Edit, Trash2, Lock, ShieldAlert } from 'lucide-react'
 import { getUser } from '../../services/auth'
-import { getMyEvents, deleteEvent } from '../../services/api'
+import { getMyEvents, deleteEvent, getErrorMessage } from '../../services/api'
 import Loading from '../../components/Loading'
 import ErrorMessage from '../../components/ErrorMessage'
 
@@ -38,7 +38,7 @@ export default function OrganizerEvents() {
       })
       .catch((err) => {
         if (isMounted) {
-          setError(err.response?.data?.message || 'Failed to load your events. Please make sure the server is running.')
+          setError(getErrorMessage(err))
           setLoading(false)
         }
       })
@@ -57,7 +57,7 @@ export default function OrganizerEvents() {
       await deleteEvent(id)
       setEvents((prev) => prev.filter((e) => e._id !== id))
     } catch (err) {
-      setDeleteError(err.response?.data?.message || 'Failed to delete event. Please try again.')
+      setDeleteError(getErrorMessage(err))
     }
   }
 

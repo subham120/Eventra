@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link, useParams, useNavigate } from 'react-router-dom'
 import { Lock, ShieldAlert } from 'lucide-react'
 import { getUser } from '../../services/auth'
-import { getEventById, updateEvent } from '../../services/api'
+import { getEventById, updateEvent, getErrorMessage } from '../../services/api'
 import EventForm from '../../components/EventForm'
 import Loading from '../../components/Loading'
 import ErrorMessage from '../../components/ErrorMessage'
@@ -42,7 +42,7 @@ export default function EditEvent() {
       })
       .catch((err) => {
         if (isMounted) {
-          setError(err.response?.data?.message || 'Event not found or failed to load.')
+          setError(getErrorMessage(err))
           setLoading(false)
         }
       })
@@ -106,7 +106,7 @@ export default function EditEvent() {
       if (err.response?.status === 403) {
         setErrorMessage('You can only edit your own events.')
       } else {
-        setErrorMessage(err.response?.data?.message || 'Unable to update event. Please try again.')
+        setErrorMessage(getErrorMessage(err))
       }
     } finally {
       setSubmitting(false)

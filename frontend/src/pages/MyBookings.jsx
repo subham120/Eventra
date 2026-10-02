@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { Calendar, Clock, MapPin, Ticket, ArrowRight } from 'lucide-react'
 import { getMyBookings, cancelBooking, getErrorMessage } from '../services/api'
 

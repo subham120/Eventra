@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { UserPlus, Sparkles } from 'lucide-react'
+import { UserPlus } from 'lucide-react'
 import FormInput from '../components/FormInput'
 import { registerUser } from '../services/api'
 

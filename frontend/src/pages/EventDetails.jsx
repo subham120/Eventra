@@ -1,10 +1,9 @@
 import { useState, useEffect } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
-import { ArrowLeft, Calendar, Clock, MapPin, Ticket, User, AlertCircle } from 'lucide-react'
+import { ArrowLeft, Calendar, Clock, MapPin, Ticket, User } from 'lucide-react'
 import Loading from '../components/Loading'
 import ErrorMessage from '../components/ErrorMessage'
 import { getEventById, getErrorMessage } from '../services/api'
-import { getUser, getToken } from '../services/auth'
 
 // EventDetails page: Detailed event view displaying MongoDB data and ticket booking CTA
 export default function EventDetails() {

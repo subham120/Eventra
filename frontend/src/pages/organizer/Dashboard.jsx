@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { PlusCircle, Calendar, Ticket, Edit, Trash2, Lock, ShieldAlert, MapPin, Clock } from 'lucide-react'
 import { getUser } from '../../services/auth'
-import { getMyEvents, deleteEvent } from '../../services/api'
+import { getMyEvents, deleteEvent, getErrorMessage } from '../../services/api'
 import StatCard from '../../components/StatCard'
 import Loading from '../../components/Loading'
 import ErrorMessage from '../../components/ErrorMessage'
@@ -39,7 +39,7 @@ export default function Dashboard() {
       })
       .catch((err) => {
         if (isMounted) {
-          setError(err.response?.data?.message || 'Failed to load your events. Please make sure the server is running.')
+          setError(getErrorMessage(err))
           setLoading(false)
         }
       })
@@ -59,7 +59,7 @@ export default function Dashboard() {
       // Update local state immediately so stats and list update without reload
       setEvents((prev) => prev.filter((e) => e._id !== id))
     } catch (err) {
-      setDeleteError(err.response?.data?.message || 'Failed to delete event. Please try again.')
+      setDeleteError(getErrorMessage(err))
     }
   }
 
