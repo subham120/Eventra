@@ -1,15 +1,14 @@
-import { 
-  Music, 
-  Laptop, 
-  Trophy, 
-  Utensils, 
-  Palette, 
-  Briefcase, 
-  GraduationCap, 
-  Smile 
+import {
+  Music,
+  Laptop,
+  Trophy,
+  Utensils,
+  Palette,
+  Briefcase,
+  GraduationCap,
+  Smile
 } from 'lucide-react'
 
-// List of event categories with their corresponding Lucide icons
 export const categories = [
   {
     name: 'Technology',

@@ -2,12 +2,10 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Calendar, Clock, MapPin, ArrowRight, Ticket } from 'lucide-react'
 
-// EventCard component: Displays an event summary card with image, details, price, and link
 export default function EventCard({ event }) {
-  // Fallback state if the external image fails to load
+
   const [imageError, setImageError] = useState(false)
 
-  // Helper to format date into "18 Oct 2026" format
   const formatFullDate = (dateStr) => {
     try {
       const date = new Date(dateStr)
@@ -21,7 +19,6 @@ export default function EventCard({ event }) {
     }
   }
 
-  // Extract month name (e.g., "OCT") for the corner badge
   const monthBadge = () => {
     try {
       return new Date(event.date).toLocaleDateString('en-IN', { month: 'short' }).toUpperCase()
@@ -30,7 +27,6 @@ export default function EventCard({ event }) {
     }
   }
 
-  // Extract day number (e.g., "18") for the corner badge
   const dayBadge = () => {
     try {
       return new Date(event.date).getDate()
@@ -41,8 +37,7 @@ export default function EventCard({ event }) {
 
   return (
     <div className="bg-white rounded-2xl overflow-hidden shadow-xs hover:shadow-md transition-shadow duration-200 border border-gray-100 flex flex-col group">
-      
-      {/* Event Image Container with overlay badges */}
+
       <div className="relative aspect-video w-full overflow-hidden bg-gray-100">
         {!imageError && event.image ? (
           <img
@@ -57,7 +52,6 @@ export default function EventCard({ event }) {
           </div>
         )}
 
-        {/* Date Corner Badge */}
         <div className="absolute top-3 left-3 bg-white/95 backdrop-blur-xs rounded-xl px-2.5 py-1 text-center shadow-xs">
           <span className="block text-[10px] font-bold text-indigo-600 uppercase tracking-wider">
             {monthBadge()}
@@ -67,21 +61,17 @@ export default function EventCard({ event }) {
           </span>
         </div>
 
-        {/* Category Badge */}
         <div className="absolute top-3 right-3 bg-indigo-900/80 backdrop-blur-xs text-white text-xs font-medium px-2.5 py-1 rounded-full shadow-xs">
           {event.category}
         </div>
       </div>
 
-      {/* Card Content */}
       <div className="p-5 flex flex-col flex-1">
-        
-        {/* Title */}
+
         <h3 className="text-base font-semibold text-gray-900 group-hover:text-indigo-600 transition-colors line-clamp-1 mb-2">
           {event.title}
         </h3>
 
-        {/* Date & Time info */}
         <div className="space-y-1.5 text-xs text-gray-500 mb-4">
           <div className="flex items-center gap-1.5">
             <Calendar className="w-3.5 h-3.5 text-indigo-500 shrink-0" />
@@ -97,7 +87,6 @@ export default function EventCard({ event }) {
           </div>
         </div>
 
-        {/* Card Footer: Price & View Details Link */}
         <div className="mt-auto pt-4 border-t border-gray-100 flex items-center justify-between">
           <div>
             <span className="block text-[11px] text-gray-400 font-medium">Ticket Price</span>

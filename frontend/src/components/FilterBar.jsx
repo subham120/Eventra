@@ -1,7 +1,6 @@
 import { categories } from '../data/categories'
 import { Calendar, RotateCcw } from 'lucide-react'
 
-// FilterBar component: Category pills, date picker, price dropdown, and clear filters action
 export default function FilterBar({
   selectedCategory,
   onCategoryChange,
@@ -11,13 +10,12 @@ export default function FilterBar({
   onPriceChange,
   onClear
 }) {
-  // All category names including "All"
+
   const categoryList = ['All', ...categories.map((c) => c.name)]
 
   return (
     <div className="space-y-4">
-      
-      {/* Category Chips Row */}
+
       <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
         {categoryList.map((cat) => {
           const isActive = selectedCategory === cat || (!selectedCategory && cat === 'All')
@@ -38,10 +36,8 @@ export default function FilterBar({
         })}
       </div>
 
-      {/* Secondary Controls: Date picker, Price filter, Clear button */}
       <div className="flex flex-wrap items-center gap-3">
-        
-        {/* Date Filter */}
+
         <div className="flex items-center gap-2 bg-white px-3.5 py-2 rounded-xl border border-gray-200 text-xs shadow-2xs">
           <Calendar className="w-4 h-4 text-indigo-500 shrink-0" />
           <input
@@ -52,7 +48,6 @@ export default function FilterBar({
           />
         </div>
 
-        {/* Price Dropdown */}
         <div className="bg-white px-3.5 py-2 rounded-xl border border-gray-200 text-xs shadow-2xs">
           <select
             value={selectedPrice}
@@ -67,7 +62,6 @@ export default function FilterBar({
           </select>
         </div>
 
-        {/* Clear Filters Button */}
         {(selectedCategory || selectedDate || selectedPrice) && (
           <button
             type="button"

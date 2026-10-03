@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom'
 import { categories } from '../data/categories'
 import FormInput from './FormInput'
 
-// Reusable event form for creating and editing events
 export default function EventForm({
   mode = 'create',
   initialValues,
@@ -13,7 +12,6 @@ export default function EventForm({
 }) {
   const navigate = useNavigate()
 
-  // Form state
   const [formData, setFormData] = useState({
     title: initialValues?.title || '',
     description: initialValues?.description || '',
@@ -26,10 +24,8 @@ export default function EventForm({
     image: initialValues?.image || '',
   })
 
-  // Client-side validation message state
   const [validationError, setValidationError] = useState('')
 
-  // Sync form state if initialValues changes (e.g. after async fetch in edit mode)
   useEffect(() => {
     if (initialValues) {
       setFormData({
@@ -46,19 +42,16 @@ export default function EventForm({
     }
   }, [initialValues])
 
-  // Handle generic input change
   const handleChange = (e) => {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
     if (validationError) setValidationError('')
   }
 
-  // Handle form submission with client-side validation
   const handleSubmit = async (e) => {
     e.preventDefault()
     setValidationError('')
 
-    // Validate required fields
     if (!formData.title.trim()) return setValidationError('Event title is required.')
     if (!formData.description.trim()) return setValidationError('Event description is required.')
     if (!formData.date) return setValidationError('Event date is required.')
@@ -66,19 +59,16 @@ export default function EventForm({
     if (!formData.location.trim()) return setValidationError('Location is required.')
     if (!formData.category) return setValidationError('Please select an event category.')
 
-    // Validate price
     const numPrice = formData.price === '' ? 0 : Number(formData.price)
     if (isNaN(numPrice) || numPrice < 0) {
       return setValidationError('Price must be a valid number greater than or equal to 0.')
     }
 
-    // Validate available tickets
     const numTickets = Number(formData.availableTickets)
     if (isNaN(numTickets) || !Number.isInteger(numTickets) || numTickets <= 0) {
       return setValidationError('Available tickets must be a whole number greater than 0.')
     }
 
-    // Call parent submit handler with formatted values
     await onSubmit({
       ...formData,
       title: formData.title.trim(),
@@ -99,15 +89,13 @@ export default function EventForm({
 
   return (
     <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 sm:p-8 space-y-6">
-      
-      {/* Error alert banner */}
+
       {(validationError || errorMessage) && (
         <div className="p-4 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm">
           {validationError || errorMessage}
         </div>
       )}
 
-      {/* Title */}
       <FormInput
         label="Event Title"
         name="title"
@@ -117,7 +105,6 @@ export default function EventForm({
         required
       />
 
-      {/* Description */}
       <div>
         <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
           Description
@@ -134,7 +121,6 @@ export default function EventForm({
         />
       </div>
 
-      {/* Category & Date Row */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
           <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-1">
@@ -173,7 +159,6 @@ export default function EventForm({
         </div>
       </div>
 
-      {/* Time & Location Row */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <FormInput
           label="Time"
@@ -194,7 +179,6 @@ export default function EventForm({
         />
       </div>
 
-      {/* Price & Tickets Row */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <FormInput
           label="Ticket Price (₹) — 0 for free"
@@ -218,7 +202,6 @@ export default function EventForm({
         />
       </div>
 
-      {/* Image URL */}
       <FormInput
         label="Event Banner Image URL (Optional)"
         name="image"
@@ -227,7 +210,6 @@ export default function EventForm({
         placeholder="https://picsum.photos/seed/event/600/400"
       />
 
-      {/* Buttons */}
       <div className="pt-4 flex items-center justify-end gap-3 border-t border-gray-100">
         <button
           type="button"

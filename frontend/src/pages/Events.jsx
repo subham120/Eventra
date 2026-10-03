@@ -9,25 +9,21 @@ import Loading from '../components/Loading'
 import ErrorMessage from '../components/ErrorMessage'
 import { getEvents, getErrorMessage } from '../services/api'
 
-// Events page: Search, filter, and paginate through events fetched from MongoDB
 export default function Events() {
-  // Read and set URL search parameters (e.g. ?category=Technology&search=hackathon)
+
   const [searchParams, setSearchParams] = useSearchParams()
 
-  // Data fetching state
   const [events, setEvents] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [reloadKey, setReloadKey] = useState(0)
 
-  // Filter state variables
   const [searchText, setSearchText] = useState(searchParams.get('search') || '')
   const [selectedCategory, setSelectedCategory] = useState(searchParams.get('category') || '')
   const [selectedDate, setSelectedDate] = useState('')
   const [selectedPrice, setSelectedPrice] = useState('')
   const [currentPage, setCurrentPage] = useState(1)
 
-  // Fetch events from backend API using the required fetch pattern
   useEffect(() => {
     async function loadData() {
       try {
@@ -42,14 +38,12 @@ export default function Events() {
     loadData()
   }, [reloadKey])
 
-  // Retry handler when data fetching fails
   const handleRetry = () => {
     setError('')
     setLoading(true)
     setReloadKey(reloadKey + 1)
   }
 
-  // Keep state in sync if URL query parameters change (e.g. clicking category link from another page)
   useEffect(() => {
     const urlCategory = searchParams.get('category') || ''
     const urlSearch = searchParams.get('search') || ''
@@ -58,7 +52,6 @@ export default function Events() {
     setCurrentPage(1)
   }, [searchParams])
 
-  // Filter change handlers that also reset pagination to page 1
   const handleCategoryChange = (category) => {
     setSelectedCategory(category)
     setCurrentPage(1)
@@ -96,7 +89,6 @@ export default function Events() {
     setCurrentPage(1)
   }
 
-  // Clear all active filters back to default
   const handleClearFilters = () => {
     setSearchText('')
     setSelectedCategory('')
@@ -106,9 +98,8 @@ export default function Events() {
     setSearchParams({})
   }
 
-  // 1. FILTERING LOGIC on the fetched events array
   const filteredEvents = events.filter((event) => {
-    // Search text filter: matches title, location, or category
+
     if (searchText.trim()) {
       const query = searchText.toLowerCase()
       const matchesTitle = event.title?.toLowerCase().includes(query)
@@ -119,21 +110,18 @@ export default function Events() {
       }
     }
 
-    // Category filter: match exact category if specified
     if (selectedCategory && selectedCategory !== 'All') {
       if (event.category?.toLowerCase() !== selectedCategory.toLowerCase()) {
         return false
       }
     }
 
-    // Date filter: compare YYYY-MM-DD strings
     if (selectedDate) {
       if (event.date !== selectedDate) {
         return false
       }
     }
 
-    // Price filter
     if (selectedPrice) {
       if (selectedPrice === 'free' && event.price !== 0) return false
       if (selectedPrice === 'under-500' && (event.price >= 500 || event.price === 0)) return false
@@ -144,7 +132,6 @@ export default function Events() {
     return true
   })
 
-  // 2. PAGINATION LOGIC: 6 events per page
   const itemsPerPage = 6
   const totalPages = Math.ceil(filteredEvents.length / itemsPerPage)
   const startIndex = (currentPage - 1) * itemsPerPage
@@ -152,8 +139,7 @@ export default function Events() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-8">
-      
-      {/* Header section with title, subtitle, and total events counter */}
+
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 text-indigo-700 text-xs font-semibold uppercase tracking-wider mb-2">
@@ -168,7 +154,6 @@ export default function Events() {
           </p>
         </div>
 
-        {/* Counter Badge */}
         <div className="flex items-center gap-3 bg-white px-4 py-3 rounded-2xl border border-gray-100 shadow-2xs self-start md:self-auto">
           <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
             <Calendar className="w-5 h-5" />
@@ -182,7 +167,6 @@ export default function Events() {
         </div>
       </div>
 
-      {/* Search Input Bar (always visible) */}
       <SearchBar
         value={searchText}
         onChange={handleSearchChange}
@@ -190,7 +174,6 @@ export default function Events() {
         placeholder="Search by title, club or topic..."
       />
 
-      {/* Filter Options: Category pills, date picker, price selector (always visible) */}
       <FilterBar
         selectedCategory={selectedCategory}
         onCategoryChange={handleCategoryChange}
@@ -201,13 +184,12 @@ export default function Events() {
         onClear={handleClearFilters}
       />
 
-      {/* Dynamic Content Area: Loading, Error, Empty Database, or Results Grid */}
       {loading ? (
         <Loading message="Loading events..." />
       ) : error ? (
         <ErrorMessage message={error} onRetry={handleRetry} />
       ) : events.length === 0 ? (
-        /* Empty state when database has 0 events */
+
         <div className="text-center py-16 bg-white rounded-3xl border border-gray-100 shadow-xs max-w-lg mx-auto p-8 space-y-3">
           <div className="w-16 h-16 rounded-2xl bg-indigo-50 text-indigo-600 mx-auto flex items-center justify-center">
             <Calendar className="w-8 h-8" />
@@ -219,7 +201,7 @@ export default function Events() {
         </div>
       ) : (
         <>
-          {/* Results Count Text */}
+
           <div className="flex items-center justify-between text-xs text-gray-500 pt-2 border-t border-gray-200">
             <span>
               Showing <span className="font-semibold text-gray-900">{paginatedEvents.length}</span> of{' '}
@@ -232,7 +214,6 @@ export default function Events() {
             )}
           </div>
 
-          {/* Events Grid or No Matches Filtered State */}
           {paginatedEvents.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {paginatedEvents.map((event) => (
@@ -259,7 +240,6 @@ export default function Events() {
             </div>
           )}
 
-          {/* Pagination Controls */}
           <Pagination
             currentPage={currentPage}
             totalPages={totalPages}

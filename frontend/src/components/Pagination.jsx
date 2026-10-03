@@ -1,13 +1,11 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 
-// Pagination component: Numbered page controls with Previous and Next buttons
 export default function Pagination({ currentPage, totalPages, onPageChange }) {
-  // Do not render anything if there is only one page or no pages
+
   if (totalPages <= 1) {
     return null
   }
 
-  // Create an array of page numbers: [1, 2, 3, ...]
   const pages = []
   for (let i = 1; i <= totalPages; i++) {
     pages.push(i)
@@ -15,8 +13,7 @@ export default function Pagination({ currentPage, totalPages, onPageChange }) {
 
   return (
     <div className="flex items-center justify-center gap-2 mt-10">
-      
-      {/* Previous Button */}
+
       <button
         type="button"
         onClick={() => onPageChange(currentPage - 1)}
@@ -27,7 +24,6 @@ export default function Pagination({ currentPage, totalPages, onPageChange }) {
         <ChevronLeft className="w-4 h-4" />
       </button>
 
-      {/* Page Number Buttons */}
       {pages.map((page) => {
         const isActive = page === currentPage
         return (
@@ -46,7 +42,6 @@ export default function Pagination({ currentPage, totalPages, onPageChange }) {
         )
       })}
 
-      {/* Next Button */}
       <button
         type="button"
         onClick={() => onPageChange(currentPage + 1)}

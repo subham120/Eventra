@@ -1,6 +1,5 @@
 import { Minus, Plus } from 'lucide-react'
 
-// QuantityStepper component: Lets users increment and decrement ticket count safely within [min, max]
 export default function QuantityStepper({
   quantity,
   onChange,
@@ -21,7 +20,7 @@ export default function QuantityStepper({
 
   return (
     <div className="inline-flex items-center rounded-lg border border-gray-300 bg-white shadow-xs">
-      {/* Decrement Button */}
+
       <button
         type="button"
         onClick={handleDecrement}
@@ -32,12 +31,10 @@ export default function QuantityStepper({
         <Minus className="w-4 h-4" />
       </button>
 
-      {/* Quantity Display */}
       <span className="w-12 text-center text-sm font-bold text-gray-900 select-none">
         {quantity}
       </span>
 
-      {/* Increment Button */}
       <button
         type="button"
         onClick={handleIncrement}

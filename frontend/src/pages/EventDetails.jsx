@@ -5,19 +5,16 @@ import Loading from '../components/Loading'
 import ErrorMessage from '../components/ErrorMessage'
 import { getEventById, getErrorMessage } from '../services/api'
 
-// EventDetails page: Detailed event view displaying MongoDB data and ticket booking CTA
 export default function EventDetails() {
   const { id } = useParams()
   const navigate = useNavigate()
 
-  // State management using the required fetch pattern
   const [event, setEvent] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [reloadKey, setReloadKey] = useState(0)
   const [imageError, setImageError] = useState(false)
 
-  // Fetch event details by id
   useEffect(() => {
     async function loadData() {
       try {
@@ -36,19 +33,16 @@ export default function EventDetails() {
     loadData()
   }, [id, reloadKey])
 
-  // Retry handler for network or server errors
   const handleRetry = () => {
     setError('')
     setLoading(true)
     setReloadKey(reloadKey + 1)
   }
 
-  // Handle booking click: navigate to booking page (route protection will handle auth gate)
   const handleBookTickets = () => {
     navigate(`/booking/${event._id}`)
   }
 
-  // Helper to format date into "18 Oct 2026"
   const formatDate = (dateStr) => {
     try {
       const date = new Date(dateStr)
@@ -62,7 +56,6 @@ export default function EventDetails() {
     }
   }
 
-  // 1. Loading state
   if (loading) {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
@@ -71,7 +64,6 @@ export default function EventDetails() {
     )
   }
 
-  // 2. Error state (always shows Back to Events; Retry only shown for non-"not found" errors)
   if (error) {
     const isNotFound = error === 'Event not found.'
     return (
@@ -95,15 +87,13 @@ export default function EventDetails() {
     )
   }
 
-  // Guard against null event after loading
   if (!event) {
     return null
   }
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-6">
-      
-      {/* Top Navigation Back Link */}
+
       <Link
         to="/events"
         className="inline-flex items-center gap-2 text-sm font-semibold text-indigo-600 hover:text-indigo-700 transition-colors"
@@ -112,11 +102,9 @@ export default function EventDetails() {
         <span>Back to Events</span>
       </Link>
 
-      {/* Main Event Card */}
       <div className="bg-white rounded-3xl border border-gray-100 shadow-xs overflow-hidden p-6 sm:p-8 lg:p-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-start">
-          
-          {/* Left Column: Image with category badge */}
+
           <div className="relative aspect-video w-full rounded-2xl overflow-hidden bg-gray-100 shadow-xs">
             {!imageError && event.image ? (
               <img
@@ -130,17 +118,14 @@ export default function EventDetails() {
                 <Ticket className="w-16 h-16 opacity-40" />
               </div>
             )}
-            
-            {/* Category Badge on image */}
+
             <div className="absolute top-4 right-4 bg-indigo-900/80 backdrop-blur-xs text-white text-xs font-semibold px-3 py-1.5 rounded-full shadow-xs">
               {event.category}
             </div>
           </div>
 
-          {/* Right Column: Event Details & Booking */}
           <div className="flex flex-col space-y-6">
-            
-            {/* Title & Category */}
+
             <div>
               <span className="inline-block text-xs font-bold text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full uppercase tracking-wider mb-2">
                 {event.category}
@@ -150,15 +135,12 @@ export default function EventDetails() {
               </h1>
             </div>
 
-            {/* Event Description */}
             <p className="text-sm sm:text-base text-gray-600 leading-relaxed">
               {event.description}
             </p>
 
-            {/* Key Event Details Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 py-4 border-y border-gray-100 text-sm text-gray-700">
-              
-              {/* Date */}
+
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0">
                   <Calendar className="w-5 h-5" />
@@ -169,7 +151,6 @@ export default function EventDetails() {
                 </div>
               </div>
 
-              {/* Time */}
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0">
                   <Clock className="w-5 h-5" />
@@ -180,7 +161,6 @@ export default function EventDetails() {
                 </div>
               </div>
 
-              {/* Location */}
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0">
                   <MapPin className="w-5 h-5" />
@@ -191,7 +171,6 @@ export default function EventDetails() {
                 </div>
               </div>
 
-              {/* Organizer */}
               {event.organizer && (
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0">
@@ -208,7 +187,6 @@ export default function EventDetails() {
 
             </div>
 
-            {/* Price, Ticket Availability & Booking Button */}
             <div className="pt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
                 <span className="block text-xs text-gray-400 font-medium">Ticket Price</span>
@@ -236,7 +214,6 @@ export default function EventDetails() {
                 </div>
               </div>
 
-              {/* Action Button: Book Tickets or Sold Out */}
               {event.availableTickets > 0 ? (
                 <button
                   type="button"

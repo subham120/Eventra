@@ -1,4 +1,3 @@
-// Reusable FormInput component with styled label and input
 export default function FormInput({
   label,
   name,

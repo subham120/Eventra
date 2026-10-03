@@ -1,7 +1,6 @@
-const mongoose = require("mongoose");
-const Event = require("../models/Event");
+import mongoose from "mongoose";
+import Event from "../models/Event.js";
 
-// Get all events sorted by date in ascending order, populating organizer info
 const getEvents = async (req, res) => {
   try {
     const events = await Event.find()
@@ -17,7 +16,6 @@ const getEvents = async (req, res) => {
   }
 };
 
-// Get a single event by its ID, populating organizer info
 const getEventById = async (req, res) => {
   try {
     if (!mongoose.isValidObjectId(req.params.id)) {
@@ -39,7 +37,6 @@ const getEventById = async (req, res) => {
   }
 };
 
-// Create a new event owned by the authenticated organizer
 const createEvent = async (req, res) => {
   try {
     const {
@@ -54,7 +51,6 @@ const createEvent = async (req, res) => {
       image,
     } = req.body || {};
 
-    // Validate required fields
     if (
       !title ||
       !description ||
@@ -68,7 +64,6 @@ const createEvent = async (req, res) => {
       return res.status(400).json({ message: "All required fields must be provided" });
     }
 
-    // Validate price and availableTickets
     const numericPrice = Number(price);
     const numericTickets = Number(availableTickets);
 
@@ -80,7 +75,6 @@ const createEvent = async (req, res) => {
       return res.status(400).json({ message: "Available tickets must be greater than 0" });
     }
 
-    // Explicitly construct event data - client-supplied organizer is ignored
     const event = await Event.create({
       title: title.trim(),
       description: description.trim(),
@@ -104,7 +98,6 @@ const createEvent = async (req, res) => {
   }
 };
 
-// Get all events owned by the currently authenticated organizer
 const getMyEvents = async (req, res) => {
   try {
     const events = await Event.find({ organizer: req.user.userId }).sort({ date: 1 });
@@ -115,7 +108,6 @@ const getMyEvents = async (req, res) => {
   }
 };
 
-// Update an existing event (must be owned by authenticated organizer)
 const updateEvent = async (req, res) => {
   try {
     if (!mongoose.isValidObjectId(req.params.id)) {
@@ -127,15 +119,13 @@ const updateEvent = async (req, res) => {
       return res.status(404).json({ message: "Event not found" });
     }
 
-    // Ownership check: Ensure only the event organizer can update it
     if (!event.organizer || event.organizer.toString() !== req.user.userId) {
       return res.status(403).json({ message: "You can only edit your own events" });
     }
 
-    // Exclude organizer from update data to prevent ownership changes
-    const { organizer, ...updateData } = req.body || {};
+    const updateData = { ...(req.body || {}) };
+    delete updateData.organizer;
 
-    // Validate price and tickets if provided
     if (req.body?.price !== undefined) {
       const numericPrice = Number(req.body.price);
       if (isNaN(numericPrice) || numericPrice < 0) {
@@ -167,7 +157,6 @@ const updateEvent = async (req, res) => {
   }
 };
 
-// Delete an event (must be owned by authenticated organizer)
 const deleteEvent = async (req, res) => {
   try {
     if (!mongoose.isValidObjectId(req.params.id)) {
@@ -179,7 +168,6 @@ const deleteEvent = async (req, res) => {
       return res.status(404).json({ message: "Event not found" });
     }
 
-    // Ownership check: Ensure only the event organizer can delete it
     if (!event.organizer || event.organizer.toString() !== req.user.userId) {
       return res.status(403).json({ message: "You can only delete your own events" });
     }
@@ -196,7 +184,7 @@ const deleteEvent = async (req, res) => {
   }
 };
 
-module.exports = {
+export {
   getEvents,
   getEventById,
   createEvent,

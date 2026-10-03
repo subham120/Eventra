@@ -1,29 +1,24 @@
-const mongoose = require("mongoose");
-const Booking = require("../models/Booking");
-const Event = require("../models/Event");
+import mongoose from "mongoose";
+import Booking from "../models/Booking.js";
+import Event from "../models/Event.js";
 
-// Create a new booking for an event
 const createBooking = async (req, res) => {
   try {
     const { eventId, quantity } = req.body || {};
 
-    // Validate event ID format
     if (!eventId || !mongoose.isValidObjectId(eventId)) {
       return res.status(400).json({ message: "Invalid event ID" });
     }
 
-    // Validate quantity: must be an integer greater than 0
     if (quantity === undefined || quantity === null || !Number.isInteger(quantity) || quantity <= 0) {
       return res.status(400).json({ message: "Quantity must be a whole number greater than 0" });
     }
 
-    // Check if the event exists
     const existingEvent = await Event.findById(eventId);
     if (!existingEvent) {
       return res.status(404).json({ message: "Event not found" });
     }
 
-    // Atomically decrement tickets to prevent race conditions and overselling
     const event = await Event.findOneAndUpdate(
       { _id: eventId, availableTickets: { $gte: quantity } },
       { $inc: { availableTickets: -quantity } },
@@ -34,7 +29,6 @@ const createBooking = async (req, res) => {
       return res.status(400).json({ message: "Not enough tickets available" });
     }
 
-    // Calculate total price server-side; user ID comes strictly from the verified JWT token
     const totalAmount = event.price * quantity;
 
     const booking = await Booking.create({
@@ -51,7 +45,6 @@ const createBooking = async (req, res) => {
   }
 };
 
-// Get all bookings made by the currently authenticated user
 const getMyBookings = async (req, res) => {
   try {
     const bookings = await Booking.find({ user: req.user.userId })
@@ -65,10 +58,9 @@ const getMyBookings = async (req, res) => {
   }
 };
 
-// Cancel an existing booking and restore event ticket availability
 const cancelBooking = async (req, res) => {
   try {
-    // Validate booking ID format
+
     if (!mongoose.isValidObjectId(req.params.id)) {
       return res.status(400).json({ message: "Invalid booking ID" });
     }
@@ -78,21 +70,17 @@ const cancelBooking = async (req, res) => {
       return res.status(404).json({ message: "Booking not found" });
     }
 
-    // Ownership check: User can only cancel their own bookings
     if (!booking.user || booking.user.toString() !== req.user.userId) {
       return res.status(403).json({ message: "You can only cancel your own bookings" });
     }
 
-    // Status check: Cannot cancel an already cancelled booking
     if (booking.status === "cancelled") {
       return res.status(400).json({ message: "Booking is already cancelled" });
     }
 
-    // Mark booking as cancelled
     booking.status = "cancelled";
     await booking.save();
 
-    // Restore tickets to event if the event still exists
     const event = await Event.findById(booking.event);
     if (event) {
       event.availableTickets += booking.quantity;
@@ -106,7 +94,7 @@ const cancelBooking = async (req, res) => {
   }
 };
 
-module.exports = {
+export {
   createBooking,
   getMyBookings,
   cancelBooking,

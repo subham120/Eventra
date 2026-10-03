@@ -1,4 +1,3 @@
-// Simple StatCard component for displaying summary metrics in Organizer Dashboard
 export default function StatCard({ label, value, icon: Icon }) {
   return (
     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 flex items-center gap-4">

@@ -5,7 +5,6 @@ import { getUser } from '../../services/auth'
 import { createEvent, getErrorMessage } from '../../services/api'
 import EventForm from '../../components/EventForm'
 
-// CreateEvent page: Allows organizers to publish a new event
 export default function CreateEvent() {
   const user = getUser()
   const navigate = useNavigate()
@@ -13,7 +12,6 @@ export default function CreateEvent() {
   const [submitting, setSubmitting] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
 
-  // 1. Unauthenticated gate: Must be logged in
   if (!user) {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
@@ -34,7 +32,6 @@ export default function CreateEvent() {
     )
   }
 
-  // 2. Role gate: Must have role "organizer"
   if (user.role !== 'organizer') {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
@@ -55,7 +52,6 @@ export default function CreateEvent() {
     )
   }
 
-  // Handle form submission
   const handleCreate = async (formData) => {
     setSubmitting(true)
     setErrorMessage('')

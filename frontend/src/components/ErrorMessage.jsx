@@ -1,6 +1,5 @@
 import { AlertCircle } from 'lucide-react'
 
-// ErrorMessage component: Displays an alert card with an optional Retry button
 export default function ErrorMessage({ message, onRetry }) {
   return (
     <div className="max-w-md mx-auto my-8 p-6 bg-red-50 text-red-700 rounded-2xl border border-red-100 text-center shadow-xs">

@@ -2,7 +2,6 @@ import { Outlet } from 'react-router-dom'
 import Navbar from './Navbar'
 import Footer from './Footer'
 
-// Layout component: Common wrapper for all pages, providing consistent Navbar and Footer
 export default function Layout() {
   return (
     <div className="min-h-screen flex flex-col bg-gray-50 text-gray-900">

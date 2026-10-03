@@ -3,17 +3,14 @@ import { useNavigate } from 'react-router-dom'
 import { Calendar, Clock, MapPin, Ticket, ArrowRight } from 'lucide-react'
 import { getMyBookings, cancelBooking, getErrorMessage } from '../services/api'
 
-// MyBookings page: Lists all bookings made by the logged-in user with cancellation capability
 export default function MyBookings() {
   const navigate = useNavigate()
 
-  // 1. States required: bookings, loading, error, cancellingId
   const [bookings, setBookings] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [cancellingId, setCancellingId] = useState(null)
 
-  // Function to fetch user's bookings from backend
   const fetchBookings = async () => {
     try {
       setLoading(true)
@@ -27,12 +24,10 @@ export default function MyBookings() {
     }
   }
 
-  // Load bookings on initial page mount
   useEffect(() => {
     fetchBookings()
   }, [])
 
-  // Handle cancellation flow with browser confirmation
   const handleCancel = async (id) => {
     if (!window.confirm('Are you sure you want to cancel this booking?')) {
       return
@@ -42,7 +37,7 @@ export default function MyBookings() {
       setCancellingId(id)
       setError('')
       await cancelBooking(id)
-      // Refresh list after successful cancellation
+
       await fetchBookings()
     } catch (err) {
       setError(getErrorMessage(err))
@@ -51,7 +46,6 @@ export default function MyBookings() {
     }
   }
 
-  // Helper function to format booking date nicely (e.g. 18 Oct 2026)
   const formatBookingDate = (dateStr) => {
     try {
       const date = new Date(dateStr)
@@ -65,7 +59,6 @@ export default function MyBookings() {
     }
   }
 
-  // 1. Loading state: Plain text / simple UI
   if (loading) {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center text-gray-500 font-medium">
@@ -74,7 +67,6 @@ export default function MyBookings() {
     )
   }
 
-  // 2. Error state
   if (error) {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
@@ -92,7 +84,6 @@ export default function MyBookings() {
     )
   }
 
-  // 3. Empty state: Never a blank page
   if (bookings.length === 0) {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
@@ -117,11 +108,9 @@ export default function MyBookings() {
     )
   }
 
-  // 4. Cards state: Responsive grid (1 column mobile, 2 columns on md and desktop)
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
-      
-      {/* Header */}
+
       <div>
         <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight">
           My Bookings
@@ -131,7 +120,6 @@ export default function MyBookings() {
         </p>
       </div>
 
-      {/* Grid of Booking Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {bookings.map((booking) => {
           const event = booking.event
@@ -144,7 +132,7 @@ export default function MyBookings() {
               className="bg-white rounded-3xl border border-gray-100 shadow-sm p-6 flex flex-col justify-between hover:shadow-md transition-shadow"
             >
               <div className="space-y-4">
-                {/* Event Image & Header */}
+
                 <div className="flex gap-4 items-start">
                   {event?.image ? (
                     <img
@@ -163,7 +151,7 @@ export default function MyBookings() {
                       <h2 className="text-base sm:text-lg font-bold text-gray-900 truncate">
                         {event ? event.title : 'Event no longer available'}
                       </h2>
-                      {/* Status Badge */}
+
                       {isCancelled ? (
                         <span className="shrink-0 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-gray-100 text-gray-600">
                           Cancelled
@@ -175,7 +163,6 @@ export default function MyBookings() {
                       )}
                     </div>
 
-                    {/* Event metadata (Date, Time, Location) with optional chaining */}
                     {event ? (
                       <div className="text-xs text-gray-500 space-y-1 pt-1">
                         <div className="flex items-center gap-1.5">
@@ -198,7 +185,6 @@ export default function MyBookings() {
                   </div>
                 </div>
 
-                {/* Booking details: Quantity, Total Amount, Booking Date */}
                 <div className="pt-3 border-t border-gray-100 flex items-center justify-between text-xs text-gray-600">
                   <div>
                     <span className="font-semibold text-gray-900 text-sm">
@@ -217,7 +203,6 @@ export default function MyBookings() {
                 </div>
               </div>
 
-              {/* Action area: Cancel button only shown for confirmed bookings */}
               <div className="pt-4 mt-4 border-t border-gray-100 flex justify-end">
                 {!isCancelled && (
                   <button

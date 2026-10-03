@@ -7,18 +7,15 @@ import StatCard from '../../components/StatCard'
 import Loading from '../../components/Loading'
 import ErrorMessage from '../../components/ErrorMessage'
 
-// Organizer Dashboard: Shows summary stats, recent events, and management links
 export default function Dashboard() {
   const user = getUser()
 
-  // State management
   const [events, setEvents] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [reloadKey, setReloadKey] = useState(0)
   const [deleteError, setDeleteError] = useState('')
 
-  // Fetch organizer events on mount or when reloadKey changes
   useEffect(() => {
     if (!user || user.role !== 'organizer') {
       setLoading(false)
@@ -47,23 +44,22 @@ export default function Dashboard() {
     return () => {
       isMounted = false
     }
+
   }, [user?.role, reloadKey])
 
-  // Handle event deletion with confirmation
   const handleDelete = async (id) => {
     if (!window.confirm('Are you sure you want to delete this event?')) return
 
     try {
       setDeleteError('')
       await deleteEvent(id)
-      // Update local state immediately so stats and list update without reload
+
       setEvents((prev) => prev.filter((e) => e._id !== id))
     } catch (err) {
       setDeleteError(getErrorMessage(err))
     }
   }
 
-  // 1. Unauthenticated gate: Must be logged in
   if (!user) {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
@@ -84,7 +80,6 @@ export default function Dashboard() {
     )
   }
 
-  // 2. Role gate: Must have role "organizer"
   if (user.role !== 'organizer') {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
@@ -105,14 +100,12 @@ export default function Dashboard() {
     )
   }
 
-  // Calculate summary metrics
   const totalEvents = events.length
   const totalTickets = events.reduce((sum, e) => sum + (e.availableTickets || 0), 0)
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-      
-      {/* Header with Title and Create Button */}
+
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight">Organizer Dashboard</h1>
@@ -129,20 +122,17 @@ export default function Dashboard() {
         </Link>
       </div>
 
-      {/* Statistics Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
         <StatCard label="Total Events" value={totalEvents} icon={Calendar} />
         <StatCard label="Total Available Tickets" value={totalTickets} icon={Ticket} />
       </div>
 
-      {/* Delete error alert */}
       {deleteError && (
         <div className="mb-6 p-4 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm">
           {deleteError}
         </div>
       )}
 
-      {/* Content Area: Loading / Error / Event List */}
       {loading ? (
         <Loading message="Loading your dashboard..." />
       ) : error ? (

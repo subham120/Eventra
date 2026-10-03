@@ -1,6 +1,5 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
-// Mongoose schema definition for User documents
 const userSchema = new mongoose.Schema(
   {
     name: {
@@ -15,7 +14,7 @@ const userSchema = new mongoose.Schema(
       lowercase: true,
       trim: true,
     },
-    // Note: This stores the bcrypt password hash, so no minlength validation is added here
+
     password: {
       type: String,
       required: true,
@@ -27,9 +26,8 @@ const userSchema = new mongoose.Schema(
     },
   },
   {
-    timestamps: true, // Automatically manages createdAt and updatedAt
+    timestamps: true,
   }
 );
 
-// Export User model
-module.exports = mongoose.model("User", userSchema);
+export default mongoose.model("User", userSchema);

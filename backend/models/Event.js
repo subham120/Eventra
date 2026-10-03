@@ -1,6 +1,5 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
-// Mongoose schema definition for Event documents
 const eventSchema = new mongoose.Schema({
   title: {
     type: String,
@@ -10,7 +9,7 @@ const eventSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  // Date format is stored as a string in YYYY-MM-DD format (e.g., "2026-10-18")
+
   date: {
     type: String,
     required: true,
@@ -46,5 +45,4 @@ const eventSchema = new mongoose.Schema({
   },
 });
 
-// Export Event model
-module.exports = mongoose.model("Event", eventSchema);
+export default mongoose.model("Event", eventSchema);

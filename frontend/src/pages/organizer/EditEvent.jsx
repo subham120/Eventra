@@ -7,13 +7,11 @@ import EventForm from '../../components/EventForm'
 import Loading from '../../components/Loading'
 import ErrorMessage from '../../components/ErrorMessage'
 
-// EditEvent page: Allows organizers to modify an existing event
 export default function EditEvent() {
   const { id } = useParams()
   const user = getUser()
   const navigate = useNavigate()
 
-  // State management
   const [event, setEvent] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -22,7 +20,6 @@ export default function EditEvent() {
   const [submitting, setSubmitting] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
 
-  // Fetch event details on mount or reloadKey change
   useEffect(() => {
     if (!user || user.role !== 'organizer') {
       setLoading(false)
@@ -50,9 +47,9 @@ export default function EditEvent() {
     return () => {
       isMounted = false
     }
+
   }, [id, user?.role, reloadKey])
 
-  // 1. Unauthenticated gate: Must be logged in
   if (!user) {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
@@ -73,7 +70,6 @@ export default function EditEvent() {
     )
   }
 
-  // 2. Role gate: Must have role "organizer"
   if (user.role !== 'organizer') {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
@@ -94,7 +90,6 @@ export default function EditEvent() {
     )
   }
 
-  // Handle form update submission
   const handleUpdate = async (formData) => {
     setSubmitting(true)
     setErrorMessage('')

@@ -4,11 +4,9 @@ import { UserPlus } from 'lucide-react'
 import FormInput from '../components/FormInput'
 import { registerUser } from '../services/api'
 
-// Register page: Allows new users and organizers to create an account
 export default function Register() {
   const navigate = useNavigate()
 
-  // Form input state
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -17,12 +15,10 @@ export default function Register() {
     role: 'user',
   })
 
-  // Feedback and loading state
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
   const [submitting, setSubmitting] = useState(false)
 
-  // Handle input changes
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -30,13 +26,11 @@ export default function Register() {
     })
   }
 
-  // Handle form submission with client-side validation
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
     setSuccess('')
 
-    // 1. All fields required
     if (
       !formData.name.trim() ||
       !formData.email.trim() ||
@@ -47,26 +41,22 @@ export default function Register() {
       return
     }
 
-    // 2. Email format validation
     const emailPattern = /^\S+@\S+\.\S+$/
     if (!emailPattern.test(formData.email.trim())) {
       setError('Please enter a valid email address.')
       return
     }
 
-    // 3. Password minimum length
     if (formData.password.length < 6) {
       setError('Password must be at least 6 characters.')
       return
     }
 
-    // 4. Password confirmation match
     if (formData.password !== formData.confirmPassword) {
       setError('Passwords do not match.')
       return
     }
 
-    // 5. Submit valid payload to backend API
     setSubmitting(true)
     try {
       await registerUser({
@@ -94,8 +84,7 @@ export default function Register() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <div className="max-w-md mx-auto bg-white rounded-2xl border border-gray-100 shadow-xs p-6 sm:p-8 space-y-6">
-        
-        {/* Header with icon and title */}
+
         <div className="text-center space-y-2">
           <div className="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 mx-auto flex items-center justify-center">
             <UserPlus className="w-6 h-6" />
@@ -108,21 +97,18 @@ export default function Register() {
           </p>
         </div>
 
-        {/* Error message box */}
         {error && (
           <div className="p-3 bg-red-50 text-red-700 text-xs font-medium rounded-xl border border-red-100">
             {error}
           </div>
         )}
 
-        {/* Success message box */}
         {success && (
           <div className="p-3 bg-emerald-50 text-emerald-700 text-xs font-medium rounded-xl border border-emerald-100">
             {success}
           </div>
         )}
 
-        {/* Registration Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
           <FormInput
             label="Full Name"
@@ -164,7 +150,6 @@ export default function Register() {
             autoComplete="new-password"
           />
 
-          {/* Account Role Selector */}
           <div>
             <label htmlFor="role" className="block text-sm font-medium text-gray-700 mb-1">
               I want to join as
@@ -181,7 +166,6 @@ export default function Register() {
             </select>
           </div>
 
-          {/* Submit Button */}
           <button
             type="submit"
             disabled={submitting}
@@ -191,7 +175,6 @@ export default function Register() {
           </button>
         </form>
 
-        {/* Footer Link to Login */}
         <div className="text-center pt-2 border-t border-gray-100 text-xs text-gray-500">
           Already have an account?{' '}
           <Link to="/login" className="font-semibold text-indigo-600 hover:text-indigo-700">

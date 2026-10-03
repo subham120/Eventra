@@ -1,36 +1,30 @@
 import { Link } from 'react-router-dom'
 import { Sparkles, CheckCircle, ArrowRight } from 'lucide-react'
 
-// OrganizerCTA component: Call-to-action banner inviting organizers to host events on Eventra
 export default function OrganizerCTA() {
   return (
     <div className="relative overflow-hidden rounded-3xl bg-indigo-600 text-white p-8 sm:p-12 shadow-md">
-      
-      {/* Decorative background circle */}
-      <div 
-        className="absolute -right-16 -bottom-16 w-80 h-80 rounded-full bg-white/10 pointer-events-none" 
-        aria-hidden="true" 
+
+      <div
+        className="absolute -right-16 -bottom-16 w-80 h-80 rounded-full bg-white/10 pointer-events-none"
+        aria-hidden="true"
       />
 
       <div className="relative z-10 max-w-2xl">
-        
-        {/* Badge */}
+
         <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/15 text-indigo-100 text-xs font-semibold uppercase tracking-wider mb-4">
           <Sparkles className="w-3.5 h-3.5" />
           <span>Organizer Portal</span>
         </div>
 
-        {/* Heading */}
         <h2 className="text-2xl sm:text-3xl font-bold tracking-tight mb-3">
           Have an event to organize?
         </h2>
 
-        {/* Subtext */}
         <p className="text-sm sm:text-base text-indigo-100 leading-relaxed mb-8">
           Create your event in under 3 minutes, publish tickets, and manage attendees with our clean organizer dashboard.
         </p>
 
-        {/* Action Buttons */}
         <div className="flex flex-wrap items-center gap-4 mb-8">
           <Link
             to="/register"
@@ -47,7 +41,6 @@ export default function OrganizerCTA() {
           </Link>
         </div>
 
-        {/* Value Proposition Highlights */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs text-indigo-100">
           <div className="flex items-center gap-2">
             <CheckCircle className="w-4 h-4 text-emerald-300 shrink-0" />

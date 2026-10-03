@@ -3,34 +3,28 @@ import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { Ticket, Menu, X, User as UserIcon } from 'lucide-react'
 import { getUser, logout } from '../services/auth'
 
-// Navbar component: Displays top navigation bar with brand logo, links, auth state, and mobile menu
 export default function Navbar() {
-  // Read current user on every render directly from localStorage
+
   const user = getUser()
   const navigate = useNavigate()
 
-  // State to toggle mobile hamburger menu
   const [isOpen, setIsOpen] = useState(false)
 
-  // Helper functions to close menu
   const closeMenu = () => setIsOpen(false)
 
-  // Handle logout: Clear token & user, close mobile menu, redirect to home
   const handleLogout = () => {
     closeMenu()
     logout()
     navigate('/')
   }
 
-
   return (
     <header className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-xs">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          
-          {/* Logo and Brand Name */}
-          <Link 
-            to="/" 
+
+          <Link
+            to="/"
             className="flex items-center gap-2 text-xl font-bold text-indigo-600 tracking-tight"
             onClick={closeMenu}
           >
@@ -40,7 +34,6 @@ export default function Navbar() {
             <span>Eventra</span>
           </Link>
 
-          {/* Desktop Navigation Links */}
           <nav className="hidden md:flex items-center gap-8">
             <NavLink
               to="/"
@@ -63,7 +56,6 @@ export default function Navbar() {
               Events
             </NavLink>
 
-            {/* Authenticated Links */}
             {user && (
               <>
                 <NavLink
@@ -92,7 +84,6 @@ export default function Navbar() {
             )}
           </nav>
 
-          {/* Desktop Action Buttons */}
           <div className="hidden md:flex items-center gap-3">
             {user ? (
               <div className="flex items-center gap-3">
@@ -126,7 +117,6 @@ export default function Navbar() {
             )}
           </div>
 
-          {/* Mobile Hamburger Button */}
           <div className="flex md:hidden">
             <button
               onClick={() => setIsOpen(!isOpen)}
@@ -140,7 +130,6 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Mobile Dropdown Menu */}
       {isOpen && (
         <div className="md:hidden border-t border-gray-100 bg-white px-4 pt-3 pb-5 space-y-3">
           <NavLink
@@ -203,7 +192,6 @@ export default function Navbar() {
             </>
           )}
 
-          {/* Mobile Buttons */}
           <div className="pt-2 flex flex-col gap-2">
             {user ? (
               <div className="space-y-2">

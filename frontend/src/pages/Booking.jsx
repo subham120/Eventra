@@ -4,19 +4,16 @@ import { ArrowLeft, Calendar, Clock, MapPin, Ticket } from 'lucide-react'
 import { getEventById, createBooking, getErrorMessage } from '../services/api'
 import QuantityStepper from '../components/QuantityStepper'
 
-// Booking page: Allows users to select ticket quantity, view cost summary, and book tickets
 export default function Booking() {
   const { eventId } = useParams()
   const navigate = useNavigate()
 
-  // Component states
   const [event, setEvent] = useState(null)
   const [quantity, setQuantity] = useState(1)
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
 
-  // Fetch event details on component mount or eventId change
   useEffect(() => {
     let isMounted = true
     setLoading(true)
@@ -45,17 +42,16 @@ export default function Booking() {
     }
   }, [eventId])
 
-  // Handle booking submission
   const handleConfirmBooking = async (e) => {
     if (e) e.preventDefault()
-    // Prevent double submission if already in flight
+
     if (submitting) return
 
     setSubmitting(true)
     setError('')
 
     try {
-      // Send ONLY eventId and quantity as required by security guidelines
+
       await createBooking(event._id, quantity)
       navigate('/my-bookings')
     } catch (err) {
@@ -64,7 +60,6 @@ export default function Booking() {
     }
   }
 
-  // 1. Loading state
   if (loading) {
     return (
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center text-gray-500 font-medium">
@@ -73,7 +68,6 @@ export default function Booking() {
     )
   }
 
-  // 2. Error state when event could not be loaded
   if (error && !event) {
     return (
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -91,10 +85,8 @@ export default function Booking() {
     )
   }
 
-  // Guard against missing event
   if (!event) return null
 
-  // 3. Sold Out state: if no tickets left, show Sold Out and a link to /events instead of the booking form
   if (event.availableTickets === 0) {
     return (
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
@@ -120,8 +112,7 @@ export default function Booking() {
 
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-6">
-      
-      {/* Back Link to Event Details */}
+
       <Link
         to={`/events/${event._id}`}
         className="inline-flex items-center gap-2 text-sm font-semibold text-indigo-600 hover:text-indigo-700 transition-colors"
@@ -130,10 +121,8 @@ export default function Booking() {
         <span>Back to Event Details</span>
       </Link>
 
-      {/* Main Checkout Card */}
       <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden p-6 sm:p-8 space-y-6">
-        
-        {/* Header */}
+
         <div>
           <span className="text-xs font-bold text-indigo-600 uppercase tracking-wider bg-indigo-50 px-3 py-1 rounded-full">
             Checkout
@@ -143,14 +132,12 @@ export default function Booking() {
           </h1>
         </div>
 
-        {/* Friendly Error Box for submit errors, insufficient tickets, etc. */}
         {error && (
           <div className="bg-red-50 text-red-600 rounded-lg p-3 text-sm">
             {error}
           </div>
         )}
 
-        {/* Event Preview Summary - Stacked on mobile, side-by-side on lg */}
         <div className="p-5 rounded-2xl bg-gray-50 border border-gray-100 flex flex-col lg:flex-row gap-5 items-start lg:items-center">
           {event.image ? (
             <img
@@ -188,7 +175,6 @@ export default function Booking() {
           </div>
         </div>
 
-        {/* Ticket Selector */}
         <div className="space-y-4 pt-2 border-t border-gray-100">
           <div className="flex items-center justify-between">
             <div>
@@ -203,7 +189,6 @@ export default function Booking() {
             />
           </div>
 
-          {/* Pricing Summary (Display Only) */}
           <div className="bg-gray-50 rounded-2xl p-5 border border-gray-100 space-y-2 text-sm">
             <div className="flex justify-between text-gray-600">
               <span>Price per ticket:</span>
@@ -224,7 +209,6 @@ export default function Booking() {
           </div>
         </div>
 
-        {/* Submit Booking Button */}
         <div className="pt-2">
           <button
             type="button"

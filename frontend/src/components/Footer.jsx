@@ -1,14 +1,12 @@
 import { Link } from 'react-router-dom'
 import { Ticket } from 'lucide-react'
 
-// Footer component: Displays bottom site information, links, and college project tech stack
 export default function Footer() {
   return (
     <footer className="bg-white border-t border-gray-200 mt-auto">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          
-          {/* Brand & Description */}
+
           <div className="space-y-4 md:col-span-1">
             <Link to="/" className="flex items-center gap-2 text-xl font-bold text-indigo-600">
               <div className="w-8 h-8 rounded-lg bg-indigo-50 flex items-center justify-center text-indigo-600">
@@ -21,7 +19,6 @@ export default function Footer() {
             </p>
           </div>
 
-          {/* Quick Links */}
           <div>
             <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-4">
               Quick Links
@@ -42,7 +39,6 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Categories */}
           <div>
             <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-4">
               Top Categories
@@ -63,7 +59,6 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Contact & Tech Stack */}
           <div>
             <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-4">
               Project Stack
@@ -78,7 +73,6 @@ export default function Footer() {
 
         </div>
 
-        {/* Bottom copyright line */}
         <div className="border-t border-gray-100 mt-10 pt-6 flex flex-col sm:flex-row items-center justify-between text-xs text-gray-400 gap-4">
           <p>© 2026 Eventra. Built with React, Node.js, Express & MongoDB.</p>
           <div className="flex gap-6">

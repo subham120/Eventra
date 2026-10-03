@@ -10,18 +10,15 @@ import ErrorMessage from '../components/ErrorMessage'
 import { categories } from '../data/categories'
 import { getEvents, getErrorMessage } from '../services/api'
 
-// Home page: Landing page with hero banner, quick category links, featured events, and organizer CTA
 export default function Home() {
   const [searchText, setSearchText] = useState('')
   const navigate = useNavigate()
 
-  // Featured events data fetching state
   const [events, setEvents] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [reloadKey, setReloadKey] = useState(0)
 
-  // Fetch events for the Featured Events section
   useEffect(() => {
     async function loadData() {
       try {
@@ -36,14 +33,12 @@ export default function Home() {
     loadData()
   }, [reloadKey])
 
-  // Retry handler when fetching events fails
   const handleRetry = () => {
     setError('')
     setLoading(true)
     setReloadKey(reloadKey + 1)
   }
 
-  // Handle hero search submit: Redirect to /events with the search query param
   const handleSearchSubmit = (e) => {
     e.preventDefault()
     if (searchText.trim()) {
@@ -53,38 +48,31 @@ export default function Home() {
     }
   }
 
-  // Quick tag click handler
   const handleTagClick = (tag) => {
     navigate(`/events?search=${encodeURIComponent(tag)}`)
   }
 
-  // Take the first 4 events for the featured section
   const featuredEvents = events.slice(0, 4)
 
   return (
     <div className="space-y-16 sm:space-y-20 py-8 sm:py-12">
-      
-      {/* 1. HERO SECTION */}
+
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-3xl mx-auto space-y-6">
-          
-          {/* Top Pill / Tag */}
+
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-700 text-xs font-semibold">
             <Sparkles className="w-3.5 h-3.5 text-indigo-600" />
             <span>CAMPUS & TECH PULSE 2026 • Discover 120+ active events</span>
           </div>
 
-          {/* Main Headline */}
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-gray-900 tracking-tight leading-tight">
             Find Your <span className="text-indigo-600">Next Event</span>
           </h1>
 
-          {/* Subtitle */}
           <p className="text-base sm:text-lg text-gray-600 leading-relaxed max-w-2xl mx-auto">
             Discover college festivals, technical hackathons, esports tournaments, and hands-on workshops happening across campuses.
           </p>
 
-          {/* SearchBar */}
           <div className="pt-2 max-w-2xl mx-auto">
             <SearchBar
               value={searchText}
@@ -94,7 +82,6 @@ export default function Home() {
             />
           </div>
 
-          {/* Quick Search Chips */}
           <div className="flex flex-wrap items-center justify-center gap-2 pt-1 text-xs">
             <span className="text-gray-400 font-medium">Trending:</span>
             {['Hackathons', 'Tech Fest', 'Robotics', 'Music Meet', 'Design'].map((tag) => (
@@ -109,7 +96,6 @@ export default function Home() {
             ))}
           </div>
 
-          {/* Trust / Stats Row */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-8 border-t border-gray-200/80">
             <div className="p-3 bg-white rounded-xl border border-gray-100 shadow-2xs">
               <div className="flex items-center justify-center gap-2 text-indigo-600 font-bold text-lg">
@@ -147,7 +133,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 2. POPULAR CATEGORIES SECTION */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4">
           <div>
@@ -170,7 +155,6 @@ export default function Home() {
           </Link>
         </div>
 
-        {/* Categories Grid (2 cols mobile, 4 cols md) */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {categories.map((category) => (
             <CategoryCard key={category.name} category={category} />
@@ -178,7 +162,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 3. FEATURED EVENTS SECTION */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4">
           <div>
@@ -201,7 +184,6 @@ export default function Home() {
           </Link>
         </div>
 
-        {/* Dynamic content: Loading, Error, Empty, or Cards Grid */}
         {loading ? (
           <Loading message="Loading featured events..." />
         ) : error ? (
@@ -219,7 +201,6 @@ export default function Home() {
         )}
       </section>
 
-      {/* 4. ORGANIZER CTA BANNER */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <OrganizerCTA />
       </section>

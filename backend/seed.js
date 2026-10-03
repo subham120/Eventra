@@ -1,20 +1,16 @@
-// Load environment variables for MongoDB connection
-require("dotenv").config();
+import "dotenv/config";
+import dns from "dns";
+import mongoose from "mongoose";
+import bcrypt from "bcryptjs";
+import User from "./models/User.js";
+import Event from "./models/Event.js";
 
-const dns = require("dns");
-// Set reliable DNS servers for MongoDB Atlas SRV record resolution
 try {
   dns.setServers(["8.8.8.8", "8.8.4.4"]);
-} catch (e) {
-  // Ignore if not supported
+} catch {
+
 }
 
-const mongoose = require("mongoose");
-const bcrypt = require("bcryptjs");
-const User = require("./models/User");
-const Event = require("./models/Event");
-
-// 12 sample events matching frontend data without hardcoded _id
 const sampleEvents = [
   {
     title: "HackTech 2026: National Inter-College Hackathon",
@@ -162,7 +158,6 @@ const sampleEvents = [
   }
 ];
 
-// Seed function: Populates initial sample data if the events collection is empty
 async function seedDatabase() {
   if (!process.env.MONGODB_URI) {
     console.log("MONGODB_URI is missing in backend/.env");
@@ -172,7 +167,6 @@ async function seedDatabase() {
   try {
     await mongoose.connect(process.env.MONGODB_URI);
 
-    // Count existing events
     const count = await Event.countDocuments();
     if (count > 0) {
       console.log("Events already exist. Seed skipped.");
@@ -180,7 +174,6 @@ async function seedDatabase() {
       process.exit(0);
     }
 
-    // Find or create an organizer test account
     let organizerUser = await User.findOne({ email: "organizer@example.test" });
     if (!organizerUser) {
       const hashedPassword = await bcrypt.hash("OrganizerPass123!", 10);
@@ -193,13 +186,11 @@ async function seedDatabase() {
       console.log("Created organizer account: organizer@example.test");
     }
 
-    // Attach real organizer ObjectId to each event
     const eventsWithOrganizer = sampleEvents.map((event) => ({
       ...event,
       organizer: organizerUser._id,
     }));
 
-    // Insert sample events
     const inserted = await Event.insertMany(eventsWithOrganizer);
     console.log(`Successfully seeded ${inserted.length} events with organizer ${organizerUser._id}.`);
 

@@ -1,41 +1,53 @@
-// Load environment variables at the very top
-require("dotenv").config();
+import "dotenv/config";
+import dns from "dns";
+import express from "express";
+import mongoose from "mongoose";
+import cors from "cors";
+import eventRoutes from "./routes/eventRoutes.js";
+import authRoutes from "./routes/authRoutes.js";
+import bookingRoutes from "./routes/bookingRoutes.js";
 
-const dns = require("dns");
 try {
   dns.setServers(["8.8.8.8", "8.8.4.4"]);
-} catch (e) {}
+} catch {}
 
-const express = require("express");
-const mongoose = require("mongoose");
-const cors = require("cors");
-const eventRoutes = require("./routes/eventRoutes");
-const authRoutes = require("./routes/authRoutes");
-const bookingRoutes = require("./routes/bookingRoutes");
-
-// Initialize express app
 const app = express();
 
-// Middleware: Enable Cross-Origin Resource Sharing and JSON request parsing
-app.use(cors());
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://localhost:4173",
+];
+if (process.env.FRONTEND_URL) {
+  allowedOrigins.push(process.env.FRONTEND_URL.replace(/\/+$/, ""));
+}
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(null, false);
+      }
+    },
+    credentials: true,
+  })
+);
 app.use(express.json());
 
-// Health check route
 app.get("/", (req, res) => {
-  res.send("Eventra API is running");
+  res.json({ message: "Eventra API is running" });
 });
 
-// Mount API routes
 app.use("/api/events", eventRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/bookings", bookingRoutes);
 
-// Catch-all 404 handler for unknown routes (returns JSON instead of Express HTML)
 app.use((req, res) => {
   res.status(404).json({ message: "Route not found" });
 });
 
-// Validate required environment variables
 const PORT = process.env.PORT || 5000;
 
 if (!process.env.MONGODB_URI) {
@@ -48,7 +60,6 @@ if (!process.env.JWT_SECRET) {
   process.exit(1);
 }
 
-// Connect to MongoDB and start the server
 mongoose
   .connect(process.env.MONGODB_URI)
   .then(() => {
@@ -58,6 +69,6 @@ mongoose
     });
   })
   .catch((error) => {
-    console.log(error.message);
+    console.error(`MongoDB connection error: ${error.message}`);
     process.exit(1);
   });

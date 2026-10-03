@@ -1,6 +1,5 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
-// Mongoose schema definition for Booking documents
 const bookingSchema = new mongoose.Schema(
   {
     user: {
@@ -36,5 +35,4 @@ const bookingSchema = new mongoose.Schema(
   }
 );
 
-// Export Booking model
-module.exports = mongoose.model("Booking", bookingSchema);
+export default mongoose.model("Booking", bookingSchema);

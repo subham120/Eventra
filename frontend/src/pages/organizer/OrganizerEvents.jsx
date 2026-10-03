@@ -6,18 +6,15 @@ import { getMyEvents, deleteEvent, getErrorMessage } from '../../services/api'
 import Loading from '../../components/Loading'
 import ErrorMessage from '../../components/ErrorMessage'
 
-// OrganizerEvents page: Lists all events published by the logged-in organizer
 export default function OrganizerEvents() {
   const user = getUser()
 
-  // State management
   const [events, setEvents] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [reloadKey, setReloadKey] = useState(0)
   const [deleteError, setDeleteError] = useState('')
 
-  // Fetch organizer events on mount or when reloadKey changes
   useEffect(() => {
     if (!user || user.role !== 'organizer') {
       setLoading(false)
@@ -46,9 +43,9 @@ export default function OrganizerEvents() {
     return () => {
       isMounted = false
     }
+
   }, [user?.role, reloadKey])
 
-  // Delete event with confirmation
   const handleDelete = async (id) => {
     if (!window.confirm('Are you sure you want to delete this event?')) return
 
@@ -61,7 +58,6 @@ export default function OrganizerEvents() {
     }
   }
 
-  // 1. Unauthenticated gate: Must be logged in
   if (!user) {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
@@ -82,7 +78,6 @@ export default function OrganizerEvents() {
     )
   }
 
-  // 2. Role gate: Must have role "organizer"
   if (user.role !== 'organizer') {
     return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
@@ -105,8 +100,7 @@ export default function OrganizerEvents() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-      
-      {/* Header */}
+
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight">My Events</h1>
@@ -123,14 +117,12 @@ export default function OrganizerEvents() {
         </Link>
       </div>
 
-      {/* Delete error alert */}
       {deleteError && (
         <div className="mb-6 p-4 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm">
           {deleteError}
         </div>
       )}
 
-      {/* Content */}
       {loading ? (
         <Loading message="Loading your events..." />
       ) : error ? (
@@ -159,7 +151,7 @@ export default function OrganizerEvents() {
               key={event._id}
               className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden flex flex-col hover:border-gray-200 transition-colors"
             >
-              {/* Event Image */}
+
               <div className="aspect-video w-full bg-linear-to-br from-indigo-100 to-indigo-50 relative overflow-hidden">
                 {event.image ? (
                   <img
@@ -177,7 +169,6 @@ export default function OrganizerEvents() {
                 </span>
               </div>
 
-              {/* Event Content */}
               <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
                 <div className="space-y-2">
                   <h3 className="text-lg font-bold text-gray-900 line-clamp-1">
@@ -186,7 +177,7 @@ export default function OrganizerEvents() {
                   <p className="text-xs text-gray-500 line-clamp-2">
                     {event.description}
                   </p>
-                  
+
                   <div className="space-y-1.5 pt-2 text-xs text-gray-600">
                     <div className="flex items-center gap-2">
                       <Calendar className="w-3.5 h-3.5 text-indigo-600 shrink-0" />

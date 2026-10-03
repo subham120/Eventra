@@ -1,6 +1,5 @@
 import { Loader2 } from 'lucide-react'
 
-// Loading component: Displays a centered spinner and message while fetching data
 export default function Loading({ message = 'Loading...' }) {
   return (
     <div className="flex flex-col items-center justify-center py-12 text-gray-500">
