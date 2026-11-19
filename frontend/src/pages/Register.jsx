@@ -29,7 +29,6 @@ export default function Register({ role = 'user' }) {
   const [submitting, setSubmitting] = useState(false)
 
   const isOrganizer = role === 'organizer'
-  const Icon = isOrganizer ? CalendarPlus : UserPlus
   const title = isOrganizer ? 'Create your organizer account' : 'Create your account'
   const subtitle = isOrganizer
     ? 'Sign up to create events and manage their bookings.'
