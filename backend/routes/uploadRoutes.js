@@ -115,16 +115,4 @@ router.post("/", authMiddleware, requireOrganizer, uploadLimiter, async (req, re
   }
 });
 
-    return res.status(200).json({
-      url: imageUrl,
-      path: `/uploads/${randomName}`,
-      filename: randomName,
-      size: buffer.length,
-    });
-  } catch (error) {
-    console.error("Upload error:", error);
-    return res.status(500).json({ message: error.message || "Failed to upload image" });
-  }
-});
-
 export default router;
