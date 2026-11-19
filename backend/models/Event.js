@@ -4,10 +4,14 @@ const eventSchema = new mongoose.Schema({
   title: {
     type: String,
     required: true,
+    trim: true,
+    maxlength: 100,
   },
   description: {
     type: String,
     required: true,
+    trim: true,
+    maxlength: 2000,
   },
 
   date: {
@@ -17,14 +21,28 @@ const eventSchema = new mongoose.Schema({
   time: {
     type: String,
     required: true,
+    trim: true,
+    maxlength: 50,
   },
   location: {
     type: String,
     required: true,
+    trim: true,
+    maxlength: 200,
   },
   category: {
     type: String,
     required: true,
+    enum: [
+      "Technology",
+      "Music",
+      "Sports",
+      "Food",
+      "Art",
+      "Business",
+      "Education",
+      "Comedy",
+    ],
   },
   price: {
     type: Number,
@@ -38,6 +56,7 @@ const eventSchema = new mongoose.Schema({
   },
   image: {
     type: String,
+    trim: true,
   },
   organizer: {
     type: mongoose.Schema.Types.ObjectId,

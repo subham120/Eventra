@@ -1,13 +1,16 @@
 import { useState, useEffect } from 'react'
-import { useParams, Link, useNavigate } from 'react-router-dom'
-import { ArrowLeft, Calendar, Clock, MapPin, Ticket, User } from 'lucide-react'
+import { useParams, Link, useNavigate, useLocation } from 'react-router-dom'
+import { ArrowLeft, Calendar, Clock, MapPin, Ticket, User, AlertCircle } from 'lucide-react'
 import Loading from '../components/Loading'
 import ErrorMessage from '../components/ErrorMessage'
-import { getEventById, getErrorMessage } from '../services/api'
+import { getEventById, getErrorMessage, getImageUrl } from '../services/api'
 
 export default function EventDetails() {
   const { id } = useParams()
   const navigate = useNavigate()
+  const location = useLocation()
+
+  const backLink = location.state?.from || '/events'
 
   const [event, setEvent] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -39,7 +42,11 @@ export default function EventDetails() {
     setReloadKey(reloadKey + 1)
   }
 
+  const todayStr = new Date().toISOString().split('T')[0]
+  const isPast = Boolean(event?.date && event.date < todayStr)
+
   const handleBookTickets = () => {
+    if (isPast) return
     navigate(`/booking/${event._id}`)
   }
 
@@ -75,7 +82,7 @@ export default function EventDetails() {
           />
           <div className="mt-4">
             <Link
-              to="/events"
+              to={backLink}
               className="inline-flex items-center gap-2 text-sm font-semibold text-indigo-600 hover:text-indigo-700"
             >
               <ArrowLeft className="w-4 h-4" />
@@ -95,7 +102,7 @@ export default function EventDetails() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-6">
 
       <Link
-        to="/events"
+        to={backLink}
         className="inline-flex items-center gap-2 text-sm font-semibold text-indigo-600 hover:text-indigo-700 transition-colors"
       >
         <ArrowLeft className="w-4 h-4" />
@@ -108,14 +115,14 @@ export default function EventDetails() {
           <div className="relative aspect-video w-full rounded-2xl overflow-hidden bg-gray-100 shadow-xs">
             {!imageError && event.image ? (
               <img
-                src={event.image}
+                src={getImageUrl(event.image)}
                 alt={event.title}
                 onError={() => setImageError(true)}
                 className="w-full h-full object-cover"
               />
             ) : (
-              <div className="w-full h-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white">
-                <Ticket className="w-16 h-16 opacity-40" />
+              <div className="w-full h-full bg-slate-100 text-slate-400 flex items-center justify-center">
+                <Ticket className="w-16 h-16 opacity-60" />
               </div>
             )}
 
@@ -138,6 +145,16 @@ export default function EventDetails() {
             <p className="text-sm sm:text-base text-gray-600 leading-relaxed">
               {event.description}
             </p>
+
+            {isPast && (
+              <div className="p-4 rounded-xl bg-amber-50 border border-amber-200 text-amber-850 text-sm flex items-start gap-3">
+                <AlertCircle className="w-5 h-5 shrink-0 text-amber-600 mt-0.5" />
+                <div>
+                  <span className="font-semibold block text-amber-900">This event has already passed</span>
+                  <span className="text-amber-700">The scheduled date was {formatDate(event.date)}. Ticket bookings are no longer accepted.</span>
+                </div>
+              </div>
+            )}
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 py-4 border-y border-gray-100 text-sm text-gray-700">
 
@@ -198,7 +215,11 @@ export default function EventDetails() {
                       `₹${event.price}`
                     )}
                   </span>
-                  {event.availableTickets === 0 ? (
+                  {isPast ? (
+                    <span className="text-xs font-semibold text-gray-500 bg-gray-100 px-2 py-0.5 rounded-md">
+                      Event Ended
+                    </span>
+                  ) : event.availableTickets === 0 ? (
                     <span className="text-xs font-semibold text-red-600 bg-red-50 px-2 py-0.5 rounded-md">
                       Sold Out
                     </span>
@@ -214,7 +235,15 @@ export default function EventDetails() {
                 </div>
               </div>
 
-              {event.availableTickets > 0 ? (
+              {isPast ? (
+                <button
+                  type="button"
+                  disabled
+                  className="inline-flex items-center justify-center px-8 py-3.5 bg-gray-100 text-gray-400 text-sm font-semibold rounded-xl cursor-not-allowed border border-gray-200"
+                >
+                  Event Ended
+                </button>
+              ) : event.availableTickets > 0 ? (
                 <button
                   type="button"
                   onClick={handleBookTickets}

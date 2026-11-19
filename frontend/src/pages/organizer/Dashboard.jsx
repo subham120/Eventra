@@ -167,7 +167,11 @@ export default function Dashboard() {
           </div>
 
           <div className="space-y-4">
-            {events.map((event) => (
+            {events.map((event) => {
+              const todayStr = new Date().toISOString().split('T')[0]
+              const isPast = Boolean(event.date && event.date < todayStr)
+
+              return (
               <div
                 key={event._id}
                 className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:border-gray-200 transition-colors"
@@ -177,6 +181,15 @@ export default function Dashboard() {
                     <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-700">
                       {event.category}
                     </span>
+                    {isPast ? (
+                      <span className="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-gray-100 text-gray-600">
+                        Past Event
+                      </span>
+                    ) : (
+                      <span className="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700">
+                        Active
+                      </span>
+                    )}
                     <h3 className="text-base font-bold text-gray-900 truncate">
                       {event.title}
                     </h3>
@@ -204,7 +217,7 @@ export default function Dashboard() {
                       {event.price === 0 ? 'Free' : `₹${event.price}`}
                     </div>
                     <div className="text-xs text-gray-500">
-                      {event.availableTickets} tickets left
+                      {isPast ? 'Closed' : `${event.availableTickets} tickets left`}
                     </div>
                   </div>
 
@@ -228,7 +241,7 @@ export default function Dashboard() {
                   </div>
                 </div>
               </div>
-            ))}
+            )})}
           </div>
         </div>
       )}

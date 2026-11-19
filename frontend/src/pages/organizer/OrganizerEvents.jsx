@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { PlusCircle, Calendar, MapPin, Clock, Edit, Trash2, Lock, ShieldAlert } from 'lucide-react'
 import { getUser } from '../../services/auth'
-import { getMyEvents, deleteEvent, getErrorMessage } from '../../services/api'
+import { getMyEvents, deleteEvent, getErrorMessage, getImageUrl } from '../../services/api'
 import Loading from '../../components/Loading'
 import ErrorMessage from '../../components/ErrorMessage'
 
@@ -146,27 +146,38 @@ export default function OrganizerEvents() {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {events.map((event) => (
+          {events.map((event) => {
+            const todayStr = new Date().toISOString().split('T')[0]
+            const isPast = Boolean(event.date && event.date < todayStr)
+
+            return (
             <div
               key={event._id}
               className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden flex flex-col hover:border-gray-200 transition-colors"
             >
 
-              <div className="aspect-video w-full bg-linear-to-br from-indigo-100 to-indigo-50 relative overflow-hidden">
+              <div className="aspect-video w-full bg-slate-100 relative overflow-hidden">
                 {event.image ? (
                   <img
-                    src={event.image}
+                    src={getImageUrl(event.image)}
                     alt={event.title}
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center text-indigo-300">
+                  <div className="w-full h-full flex items-center justify-center text-slate-400">
                     <Calendar className="w-12 h-12" />
                   </div>
                 )}
-                <span className="absolute top-3 left-3 px-3 py-1 rounded-full text-xs font-semibold bg-white/90 backdrop-blur-xs text-indigo-700 shadow-xs">
-                  {event.category}
-                </span>
+                <div className="absolute top-3 left-3 flex items-center gap-1.5">
+                  <span className="px-3 py-1 rounded-full text-xs font-semibold bg-white/90 backdrop-blur-xs text-indigo-700 shadow-xs">
+                    {event.category}
+                  </span>
+                  {isPast && (
+                    <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-gray-900/80 backdrop-blur-xs text-white shadow-xs">
+                      Past
+                    </span>
+                  )}
+                </div>
               </div>
 
               <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
@@ -200,7 +211,7 @@ export default function OrganizerEvents() {
                       {event.price === 0 ? 'Free' : `₹${event.price}`}
                     </span>
                     <span className="block text-[11px] text-gray-500">
-                      {event.availableTickets} tickets left
+                      {isPast ? 'Event ended' : `${event.availableTickets} tickets left`}
                     </span>
                   </div>
 
@@ -225,7 +236,7 @@ export default function OrganizerEvents() {
                 </div>
               </div>
             </div>
-          ))}
+          )})}
         </div>
       )}
     </div>

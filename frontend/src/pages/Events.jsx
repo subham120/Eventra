@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { Sparkles, Calendar, SearchX, RotateCcw } from 'lucide-react'
+import { Calendar, SearchX, RotateCcw } from 'lucide-react'
 import SearchBar from '../components/SearchBar'
 import FilterBar from '../components/FilterBar'
 import EventCard from '../components/EventCard'
@@ -18,11 +18,16 @@ export default function Events() {
   const [error, setError] = useState('')
   const [reloadKey, setReloadKey] = useState(0)
 
+  const parsePage = (param) => {
+    const parsed = parseInt(param, 10)
+    return !isNaN(parsed) && parsed > 0 ? parsed : 1
+  }
+
   const [searchText, setSearchText] = useState(searchParams.get('search') || '')
   const [selectedCategory, setSelectedCategory] = useState(searchParams.get('category') || '')
   const [selectedDate, setSelectedDate] = useState('')
   const [selectedPrice, setSelectedPrice] = useState('')
-  const [currentPage, setCurrentPage] = useState(1)
+  const [currentPage, setCurrentPage] = useState(() => parsePage(searchParams.get('page')))
 
   useEffect(() => {
     async function loadData() {
@@ -47,20 +52,23 @@ export default function Events() {
   useEffect(() => {
     const urlCategory = searchParams.get('category') || ''
     const urlSearch = searchParams.get('search') || ''
+    const urlPage = parsePage(searchParams.get('page'))
     setSelectedCategory(urlCategory)
     setSearchText(urlSearch)
-    setCurrentPage(1)
+    setCurrentPage(urlPage)
   }, [searchParams])
 
   const handleCategoryChange = (category) => {
     setSelectedCategory(category)
     setCurrentPage(1)
+    const newParams = new URLSearchParams(searchParams)
     if (category) {
-      searchParams.set('category', category)
+      newParams.set('category', category)
     } else {
-      searchParams.delete('category')
+      newParams.delete('category')
     }
-    setSearchParams(searchParams)
+    newParams.delete('page')
+    setSearchParams(newParams)
   }
 
   const handleSearchChange = (e) => {
@@ -71,12 +79,14 @@ export default function Events() {
   const handleSearchSubmit = (e) => {
     if (e) e.preventDefault()
     setCurrentPage(1)
+    const newParams = new URLSearchParams(searchParams)
     if (searchText.trim()) {
-      searchParams.set('search', searchText.trim())
+      newParams.set('search', searchText.trim())
     } else {
-      searchParams.delete('search')
+      newParams.delete('search')
     }
-    setSearchParams(searchParams)
+    newParams.delete('page')
+    setSearchParams(newParams)
   }
 
   const handleDateChange = (date) => {
@@ -98,7 +108,25 @@ export default function Events() {
     setSearchParams({})
   }
 
+  const handlePageChange = (page) => {
+    setCurrentPage(page)
+    const newParams = new URLSearchParams(searchParams)
+    if (page > 1) {
+      newParams.set('page', page.toString())
+    } else {
+      newParams.delete('page')
+    }
+    setSearchParams(newParams)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
+  const today = new Date().toISOString().split('T')[0]
+
   const filteredEvents = events.filter((event) => {
+    // Hide past events whose date has already passed
+    if (event.date && event.date < today) {
+      return false
+    }
 
     if (searchText.trim()) {
       const query = searchText.toLowerCase()
@@ -132,9 +160,28 @@ export default function Events() {
     return true
   })
 
-  const itemsPerPage = 6
+  const [isDesktop, setIsDesktop] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return window.innerWidth >= 1024
+    }
+    return true
+  })
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(min-width: 1024px)')
+    const handleChange = (e) => {
+      setIsDesktop(e.matches)
+    }
+
+    setIsDesktop(mediaQuery.matches)
+    mediaQuery.addEventListener('change', handleChange)
+    return () => mediaQuery.removeEventListener('change', handleChange)
+  }, [])
+
+  const itemsPerPage = isDesktop ? 9 : 10
   const totalPages = Math.ceil(filteredEvents.length / itemsPerPage)
-  const startIndex = (currentPage - 1) * itemsPerPage
+  const safeCurrentPage = totalPages > 0 && currentPage > totalPages ? 1 : currentPage
+  const startIndex = (safeCurrentPage - 1) * itemsPerPage
   const paginatedEvents = filteredEvents.slice(startIndex, startIndex + itemsPerPage)
 
   return (
@@ -142,10 +189,6 @@ export default function Events() {
 
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 text-indigo-700 text-xs font-semibold uppercase tracking-wider mb-2">
-            <Sparkles className="w-3.5 h-3.5 text-indigo-600" />
-            <span>CAMPUS HUB LIVE</span>
-          </div>
           <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-900 tracking-tight">
             Explore Events
           </h1>
@@ -215,7 +258,7 @@ export default function Events() {
           </div>
 
           {paginatedEvents.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
               {paginatedEvents.map((event) => (
                 <EventCard key={event._id} event={event} />
               ))}
@@ -241,9 +284,9 @@ export default function Events() {
           )}
 
           <Pagination
-            currentPage={currentPage}
+            currentPage={safeCurrentPage}
             totalPages={totalPages}
-            onPageChange={(page) => setCurrentPage(page)}
+            onPageChange={handlePageChange}
           />
         </>
       )}

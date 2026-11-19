@@ -19,6 +19,11 @@ const createBooking = async (req, res) => {
       return res.status(404).json({ message: "Event not found" });
     }
 
+    const todayStr = new Date().toISOString().split("T")[0];
+    if (existingEvent.date && existingEvent.date < todayStr) {
+      return res.status(400).json({ message: "This event has already passed and cannot be booked" });
+    }
+
     const event = await Event.findOneAndUpdate(
       { _id: eventId, availableTickets: { $gte: quantity } },
       { $inc: { availableTickets: -quantity } },
@@ -78,14 +83,18 @@ const cancelBooking = async (req, res) => {
       return res.status(400).json({ message: "Booking is already cancelled" });
     }
 
+    const eventDoc = await Event.findById(booking.event);
+    const todayStr = new Date().toISOString().split("T")[0];
+    if (eventDoc && eventDoc.date && eventDoc.date < todayStr) {
+      return res.status(400).json({ message: "Cannot cancel booking for an event that has already passed" });
+    }
+
     booking.status = "cancelled";
     await booking.save();
 
-    const event = await Event.findById(booking.event);
-    if (event) {
-      event.availableTickets += booking.quantity;
-      await event.save();
-    }
+    await Event.findByIdAndUpdate(booking.event, {
+      $inc: { availableTickets: booking.quantity },
+    });
 
     return res.status(200).json(booking);
   } catch (error) {
@@ -94,8 +103,58 @@ const cancelBooking = async (req, res) => {
   }
 };
 
+const getOrganizerBookings = async (req, res) => {
+  try {
+    const myEvents = await Event.find({ organizer: req.user.userId }).select(
+      "_id title price availableTickets date location"
+    );
+    const eventIds = myEvents.map((e) => e._id);
+
+    const bookings = await Booking.find({ event: { $in: eventIds } })
+      .populate("user", "name email")
+      .populate("event", "title price date location")
+      .sort({ createdAt: -1 });
+
+    let totalIncome = 0;
+    let totalTicketsSold = 0;
+    const eventSalesMap = {};
+
+    myEvents.forEach((ev) => {
+      eventSalesMap[ev._id.toString()] = {
+        sold: 0,
+        revenue: 0,
+      };
+    });
+
+    bookings.forEach((b) => {
+      if (b.status === "confirmed") {
+        totalIncome += b.totalAmount || 0;
+        totalTicketsSold += b.quantity || 0;
+
+        const evId = b.event?._id?.toString() || b.event?.toString();
+        if (evId && eventSalesMap[evId]) {
+          eventSalesMap[evId].sold += b.quantity || 0;
+          eventSalesMap[evId].revenue += b.totalAmount || 0;
+        }
+      }
+    });
+
+    return res.status(200).json({
+      totalIncome,
+      totalTicketsSold,
+      totalBookings: bookings.length,
+      bookings,
+      eventSalesMap,
+    });
+  } catch (error) {
+    console.error("Organizer bookings error:", error.message);
+    return res.status(500).json({ message: "Server error" });
+  }
+};
+
 export {
   createBooking,
   getMyBookings,
   cancelBooking,
+  getOrganizerBookings,
 };

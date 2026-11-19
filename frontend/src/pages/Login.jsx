@@ -1,15 +1,22 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import { LogIn } from 'lucide-react'
+import { Link, useNavigate, useLocation, Navigate } from 'react-router-dom'
+import { LogIn, CheckCircle } from 'lucide-react'
 import FormInput from '../components/FormInput'
 import { loginUser } from '../services/api'
-import { saveAuth } from '../services/auth'
+import { saveAuth, getUser } from '../services/auth'
 
 export default function Login() {
   const navigate = useNavigate()
+  const location = useLocation()
+  const user = getUser()
+
+  if (user) {
+    const destination = location.state?.from?.pathname || (user.role === 'organizer' ? '/organizer' : '/')
+    return <Navigate to={destination} replace />
+  }
 
   const [formData, setFormData] = useState({
-    email: '',
+    email: location.state?.registeredEmail || '',
     password: '',
   })
 
@@ -41,7 +48,8 @@ export default function Login() {
 
       saveAuth(data.token, data.user)
 
-      navigate('/')
+      const target = location.state?.from?.pathname || (data.user.role === 'organizer' ? '/organizer' : '/')
+      navigate(target, { replace: true })
     } catch (err) {
       if (err.response?.data?.message) {
         setError(err.response.data.message)
@@ -68,6 +76,13 @@ export default function Login() {
             Log in to access your booked tickets and account.
           </p>
         </div>
+
+        {location.state?.registeredMessage && !error && (
+          <div className="p-3 bg-emerald-50 text-emerald-800 text-xs font-medium rounded-xl border border-emerald-100 flex items-center gap-2">
+            <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0" />
+            <span>{location.state.registeredMessage}</span>
+          </div>
+        )}
 
         {error && (
           <div className="p-3 bg-red-50 text-red-700 text-xs font-medium rounded-xl border border-red-100">

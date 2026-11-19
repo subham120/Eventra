@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { ArrowLeft, Calendar, Clock, MapPin, Ticket } from 'lucide-react'
-import { getEventById, createBooking, getErrorMessage } from '../services/api'
+import { getEventById, createBooking, getErrorMessage, getImageUrl } from '../services/api'
 import QuantityStepper from '../components/QuantityStepper'
 
 export default function Booking() {
@@ -42,8 +42,16 @@ export default function Booking() {
     }
   }, [eventId])
 
+  const todayStr = new Date().toISOString().split('T')[0]
+  const isPast = Boolean(event?.date && event.date < todayStr)
+
   const handleConfirmBooking = async (e) => {
     if (e) e.preventDefault()
+
+    if (isPast) {
+      setError('This event has already passed and cannot be booked.')
+      return
+    }
 
     if (submitting) return
 
@@ -86,6 +94,26 @@ export default function Booking() {
   }
 
   if (!event) return null
+
+  if (isPast) {
+    return (
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div className="max-w-md mx-auto text-center bg-white p-8 rounded-3xl border border-gray-100 shadow-sm">
+          <h2 className="text-xl font-bold text-gray-900 mb-2">Event Has Passed</h2>
+          <p className="text-sm text-gray-500 mb-6">
+            This event took place on {event.date} and ticket booking is closed.
+          </p>
+          <Link
+            to="/events"
+            className="inline-flex items-center gap-2 px-6 py-2.5 bg-indigo-600 text-white text-sm font-semibold rounded-xl hover:bg-indigo-700 transition-colors shadow-sm"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            <span>Browse Other Events</span>
+          </Link>
+        </div>
+      </div>
+    )
+  }
 
   if (event.availableTickets === 0) {
     return (
@@ -141,7 +169,7 @@ export default function Booking() {
         <div className="p-5 rounded-2xl bg-gray-50 border border-gray-100 flex flex-col lg:flex-row gap-5 items-start lg:items-center">
           {event.image ? (
             <img
-              src={event.image}
+              src={getImageUrl(event.image)}
               alt={event.title}
               className="w-full lg:w-32 h-40 lg:h-32 rounded-xl object-cover shrink-0"
             />

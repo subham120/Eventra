@@ -21,6 +21,10 @@ const register = async (req, res) => {
       return res.status(400).json({ message: "Name, email and password are required" });
     }
 
+    if (normalizedName.length > 100) {
+      return res.status(400).json({ message: "Name must be 100 characters or less" });
+    }
+
     const emailPattern = /^\S+@\S+\.\S+$/;
     if (!emailPattern.test(normalizedEmail)) {
       return res.status(400).json({ message: "Please enter a valid email" });

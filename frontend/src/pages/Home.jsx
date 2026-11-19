@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
-import { ArrowRight, Ticket, School, Users, CheckCircle2, Sparkles } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 import SearchBar from '../components/SearchBar'
 import CategoryCard from '../components/CategoryCard'
 import EventCard from '../components/EventCard'
@@ -52,18 +52,15 @@ export default function Home() {
     navigate(`/events?search=${encodeURIComponent(tag)}`)
   }
 
-  const featuredEvents = events.slice(0, 4)
+  const today = new Date().toISOString().split('T')[0]
+  const upcomingEvents = events.filter((e) => !e.date || e.date >= today)
+  const featuredEvents = upcomingEvents.slice(0, 4)
 
   return (
     <div className="space-y-16 sm:space-y-20 py-8 sm:py-12">
 
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-3xl mx-auto space-y-6">
-
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-700 text-xs font-semibold">
-            <Sparkles className="w-3.5 h-3.5 text-indigo-600" />
-            <span>CAMPUS & TECH PULSE 2026 • Discover 120+ active events</span>
-          </div>
 
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-gray-900 tracking-tight leading-tight">
             Find Your <span className="text-indigo-600">Next Event</span>
@@ -94,40 +91,6 @@ export default function Home() {
                 {tag}
               </button>
             ))}
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-8 border-t border-gray-200/80">
-            <div className="p-3 bg-white rounded-xl border border-gray-100 shadow-2xs">
-              <div className="flex items-center justify-center gap-2 text-indigo-600 font-bold text-lg">
-                <Ticket className="w-5 h-5" />
-                <span>12,400+</span>
-              </div>
-              <p className="text-xs text-gray-500 mt-1">Tickets Booked</p>
-            </div>
-
-            <div className="p-3 bg-white rounded-xl border border-gray-100 shadow-2xs">
-              <div className="flex items-center justify-center gap-2 text-indigo-600 font-bold text-lg">
-                <School className="w-5 h-5" />
-                <span>48 Campuses</span>
-              </div>
-              <p className="text-xs text-gray-500 mt-1">Active Universities</p>
-            </div>
-
-            <div className="p-3 bg-white rounded-xl border border-gray-100 shadow-2xs">
-              <div className="flex items-center justify-center gap-2 text-indigo-600 font-bold text-lg">
-                <Users className="w-5 h-5" />
-                <span>320+ Clubs</span>
-              </div>
-              <p className="text-xs text-gray-500 mt-1">Student Societies</p>
-            </div>
-
-            <div className="p-3 bg-white rounded-xl border border-gray-100 shadow-2xs">
-              <div className="flex items-center justify-center gap-2 text-emerald-600 font-bold text-lg">
-                <CheckCircle2 className="w-5 h-5" />
-                <span>99.8%</span>
-              </div>
-              <p className="text-xs text-gray-500 mt-1">Verified Experience</p>
-            </div>
           </div>
 
         </div>
@@ -193,7 +156,7 @@ export default function Home() {
             No events available yet.
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
             {featuredEvents.map((event) => (
               <EventCard key={event._id} event={event} />
             ))}

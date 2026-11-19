@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Calendar, Clock, MapPin, Ticket, ArrowRight } from 'lucide-react'
-import { getMyBookings, cancelBooking, getErrorMessage } from '../services/api'
+import { getMyBookings, cancelBooking, getErrorMessage, getImageUrl } from '../services/api'
 
 export default function MyBookings() {
   const navigate = useNavigate()
@@ -125,6 +125,8 @@ export default function MyBookings() {
           const event = booking.event
           const isCancelled = booking.status === 'cancelled'
           const isCancelling = cancellingId === booking._id
+          const todayStr = new Date().toISOString().split('T')[0]
+          const isPast = Boolean(event?.date && event.date < todayStr)
 
           return (
             <div
@@ -136,7 +138,7 @@ export default function MyBookings() {
                 <div className="flex gap-4 items-start">
                   {event?.image ? (
                     <img
-                      src={event.image}
+                      src={getImageUrl(event.image)}
                       alt={event.title}
                       className="w-20 h-20 rounded-2xl object-cover shrink-0"
                     />
@@ -155,6 +157,10 @@ export default function MyBookings() {
                       {isCancelled ? (
                         <span className="shrink-0 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-gray-100 text-gray-600">
                           Cancelled
+                        </span>
+                      ) : isPast ? (
+                        <span className="shrink-0 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-gray-100 text-gray-700">
+                          Completed
                         </span>
                       ) : (
                         <span className="shrink-0 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700">
@@ -204,7 +210,7 @@ export default function MyBookings() {
               </div>
 
               <div className="pt-4 mt-4 border-t border-gray-100 flex justify-end">
-                {!isCancelled && (
+                {!isCancelled && !isPast && (
                   <button
                     type="button"
                     onClick={() => handleCancel(booking._id)}
@@ -213,6 +219,11 @@ export default function MyBookings() {
                   >
                     {isCancelling ? 'Cancelling...' : 'Cancel Booking'}
                   </button>
+                )}
+                {!isCancelled && isPast && (
+                  <span className="text-xs text-gray-400 font-medium py-1">
+                    Event completed
+                  </span>
                 )}
               </div>
 
