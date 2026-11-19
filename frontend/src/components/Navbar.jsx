@@ -26,15 +26,15 @@ export default function Navbar() {
 
           <Link
             to="/"
-            className="flex items-center gap-3 text-xl font-extrabold text-gray-900 tracking-tight group"
+            className="flex items-center gap-2.5 text-xl font-extrabold text-gray-900 tracking-tight group"
             onClick={closeMenu}
           >
             <img
               src={logo}
               alt="Eventra Logo"
-              className="w-11 h-11 sm:w-12 sm:h-12 object-contain drop-shadow-sm group-hover:scale-105 transition-transform"
+              className="w-9 h-9 sm:w-10 sm:h-10 object-contain drop-shadow-xs group-hover:scale-105 transition-transform"
             />
-            <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-indigo-700 bg-clip-text text-transparent font-extrabold text-2xl sm:text-[26px] tracking-tight">
+            <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-indigo-700 bg-clip-text text-transparent font-extrabold text-xl sm:text-2xl tracking-tight">
               Eventra
             </span>
           </Link>

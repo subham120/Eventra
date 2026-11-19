@@ -8,13 +8,13 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
 
           <div className="space-y-4 md:col-span-1">
-            <Link to="/" className="flex items-center gap-3 text-xl font-bold text-gray-900 group">
+            <Link to="/" className="flex items-center gap-2.5 text-xl font-bold text-gray-900 group">
               <img
                 src={logo}
                 alt="Eventra Logo"
-                className="w-11 h-11 sm:w-12 sm:h-12 object-contain drop-shadow-sm group-hover:scale-105 transition-transform"
+                className="w-8 h-8 sm:w-9 sm:h-9 object-contain drop-shadow-xs group-hover:scale-105 transition-transform"
               />
-              <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-indigo-700 bg-clip-text text-transparent font-extrabold text-2xl tracking-tight">
+              <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-indigo-700 bg-clip-text text-transparent font-extrabold text-xl tracking-tight">
                 Eventra
               </span>
             </Link>
