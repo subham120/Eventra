@@ -1,9 +1,10 @@
 import { useState } from 'react'
 import { Link, useNavigate, Navigate } from 'react-router-dom'
-import { UserPlus, CalendarPlus, CheckCircle } from 'lucide-react'
+import { CheckCircle } from 'lucide-react'
 import FormInput from '../components/FormInput'
 import { registerUser, getErrorMessage } from '../services/api'
 import { getUser } from '../services/auth'
+import logo from '../assets/logo.png'
 
 export default function Register({ role = 'user' }) {
   const navigate = useNavigate()
@@ -127,9 +128,13 @@ export default function Register({ role = 'user' }) {
         </div>
 
         <div className="text-center space-y-2">
-          <div className="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 mx-auto flex items-center justify-center">
-            <Icon className="w-6 h-6" />
-          </div>
+          <Link to="/" className="inline-block group mb-1">
+            <img
+              src={logo}
+              alt="Eventra Logo"
+              className="w-12 h-12 object-contain mx-auto drop-shadow-xs group-hover:scale-105 transition-transform"
+            />
+          </Link>
           <h1 className="text-2xl font-bold text-gray-900 tracking-tight">
             {title}
           </h1>

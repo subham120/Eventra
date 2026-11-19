@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { Link, NavLink, useNavigate } from 'react-router-dom'
-import { Ticket, Menu, X, User as UserIcon } from 'lucide-react'
+import { Menu, X, User as UserIcon } from 'lucide-react'
 import { getUser, logout } from '../services/auth'
+import logo from '../assets/logo.png'
 
 export default function Navbar() {
 
@@ -25,13 +26,17 @@ export default function Navbar() {
 
           <Link
             to="/"
-            className="flex items-center gap-2 text-xl font-bold text-indigo-600 tracking-tight"
+            className="flex items-center gap-2.5 text-xl font-extrabold text-gray-900 tracking-tight group"
             onClick={closeMenu}
           >
-            <div className="w-9 h-9 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600">
-              <Ticket className="w-5 h-5" />
-            </div>
-            <span>Eventra</span>
+            <img
+              src={logo}
+              alt="Eventra Logo"
+              className="w-9 h-9 object-contain drop-shadow-xs group-hover:scale-105 transition-transform"
+            />
+            <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-indigo-700 bg-clip-text text-transparent font-extrabold text-2xl tracking-tight">
+              Eventra
+            </span>
           </Link>
 
           <nav className="hidden md:flex items-center gap-8">

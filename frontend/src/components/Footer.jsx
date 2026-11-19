@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { Ticket } from 'lucide-react'
+import logo from '../assets/logo.png'
 
 export default function Footer() {
   return (
@@ -8,11 +8,15 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
 
           <div className="space-y-4 md:col-span-1">
-            <Link to="/" className="flex items-center gap-2 text-xl font-bold text-indigo-600">
-              <div className="w-8 h-8 rounded-lg bg-indigo-50 flex items-center justify-center text-indigo-600">
-                <Ticket className="w-4 h-4" />
-              </div>
-              <span>Eventra</span>
+            <Link to="/" className="flex items-center gap-2.5 text-xl font-bold text-gray-900 group">
+              <img
+                src={logo}
+                alt="Eventra Logo"
+                className="w-8 h-8 object-contain drop-shadow-xs group-hover:scale-105 transition-transform"
+              />
+              <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent font-extrabold text-xl tracking-tight">
+                Eventra
+              </span>
             </Link>
             <p className="text-sm text-gray-500 leading-relaxed">
               Full-stack MERN ecosystem built for collegiate organizations, student hackathons, tech workshops, and community events.
