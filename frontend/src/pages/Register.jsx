@@ -128,11 +128,11 @@ export default function Register({ role = 'user' }) {
         </div>
 
         <div className="text-center space-y-2">
-          <Link to="/" className="inline-block group mb-1">
+          <Link to="/" className="inline-block group mb-2">
             <img
               src={logo}
               alt="Eventra Logo"
-              className="w-12 h-12 object-contain mx-auto drop-shadow-xs group-hover:scale-105 transition-transform"
+              className="w-16 h-16 sm:w-20 sm:h-20 object-contain mx-auto drop-shadow-md group-hover:scale-105 transition-transform"
             />
           </Link>
           <h1 className="text-2xl font-bold text-gray-900 tracking-tight">
