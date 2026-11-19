@@ -1,38 +1,51 @@
 # Eventra
 
-> Modern Event Management and Ticket Booking System built with the MERN stack.
+> A modern, responsive Event Management and Ticket Booking platform built with the MERN stack (MongoDB, Express, React 19, Node.js).
 
+[![GitHub](https://img.shields.io/badge/GitHub-subham120%2FEventra-181717?logo=github)](https://github.com/subham120/Eventra)
 [![React](https://img.shields.io/badge/React-19-blue.svg)](https://react.dev/)
 [![Vite](https://img.shields.io/badge/Vite-8-646CFF.svg)](https://vite.dev/)
+[![TailwindCSS](https://img.shields.io/badge/Tailwind-v4-38B2AC.svg)](https://tailwindcss.com/)
 [![Node](https://img.shields.io/badge/Node-%3E%3D20-green.svg)](https://nodejs.org/)
+[![Express](https://img.shields.io/badge/Express-5-000000.svg)](https://expressjs.com/)
 [![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-47A248.svg)](https://www.mongodb.com/)
 
-**Live Demo:** _[Add URL after deployment]_
+---
+
+## 🌟 Key Features
+
+### 🎟️ Attendee Experience
+- **Smart Event Discovery:** Search events by keyword, location, or title with real-time instant debounce.
+- **Dynamic Category & Price Filtering:** Filter across 8 curated categories (*Technology, Music, Sports, Food, Art, Business, Education, Comedy*) and price brackets (Free, Under ₹500, ₹500–₹1000, Above ₹1000).
+- **Automated Past Event Lifecycle:** Events whose dates have passed are automatically hidden from public discovery. Expired events display clear *"Event Ended"* statuses and disable ticket booking on both frontend and backend.
+- **Atomic Ticket Booking:** Concurrency-safe ticket checkout using MongoDB atomic `$inc` and `$gte` conditions to prevent race conditions or overselling.
+- **My Bookings Dashboard:** View confirmed passes, order dates, total amounts paid, and cancellation options with instant ticket restoration for active upcoming events.
+
+### 💼 Organizer Suite
+- **Dedicated Organizer Dashboard:** Real-time analytics tracking total events hosted, tickets available, sales rate, and potential earnings.
+- **Full Event CRUD:** Create, edit, and delete events with date pickers enforcing future-only scheduling.
+- **Dual Image Upload:** Support for both direct image file uploads (with client-side canvas compression) and external image URLs (e.g., Unsplash).
+- **Archival & Record Preservation:** Past events remain accessible to organizers with a distinct *"Past Event"* badge and *"Closed"* status for auditing and management.
+
+### 🛡️ Security & Architecture
+- **JWT Authentication:** Stateless, signed JSON Web Tokens for authentication with `bcryptjs` password hashing (salt rounds: 10).
+- **Role-Based Access Control (RBAC):** Strict separation between standard attendees (`user`) and event creators (`organizer`).
+- **Input Sanitization & Rate Limiting:** Protected endpoints with `helmet`, CORS whitelist policies, and express rate limiting.
 
 ---
 
-## Features
-
-- **Event Discovery & Filtering:** Browse upcoming events with real-time text search, category tabs (Technology, Music, Sports, Food, Art, Business, Education, Comedy), and price filters.
-- **Authentication & Roles:** JWT authentication with secure password hashing (`bcryptjs`). Role-based access control separates regular attendees (`user`) from event organizers (`organizer`).
-- **Atomic Ticket Booking:** Concurrency-safe ticket reservation preventing overselling via MongoDB atomic operations (`$gte` and `$inc`).
-- **Booking Management:** Attendees can view their booking history under **My Bookings** and cancel reservations with instant ticket restoration.
-- **Organizer Dashboard:** Organizers can create, edit, and delete events, track remaining ticket inventories, and review overall statistics.
-- **Responsive UI:** Clean, modern interface designed with Tailwind CSS, Lucide icons, responsive navigation, and empty/error states.
-
----
-
-## Tech Stack
+## 🛠️ Tech Stack
 
 | Layer | Technologies |
 | :--- | :--- |
 | **Frontend** | React 19, Vite 8, Tailwind CSS v4, React Router v7, Axios, Lucide React |
-| **Backend** | Node.js (>=20), Express 5, Mongoose 9, JWT, bcryptjs, cors, dotenv |
-| **Database** | MongoDB (Local or MongoDB Atlas) |
+| **Backend** | Node.js (>=20), Express 5, Mongoose 9, JWT, bcryptjs, cors, dotenv, helmet |
+| **Database** | MongoDB Atlas (Cloud) / Local MongoDB |
+| **Storage** | Local disk storage (`/backend/uploads`) with static Express serving & remote image support |
 
 ---
 
-## Project Structure
+## 📁 Project Structure
 
 ```text
 Eventra/
@@ -40,19 +53,20 @@ Eventra/
 │   ├── controllers/      # Route controllers (auth, events, bookings)
 │   ├── middleware/       # JWT auth & role validation middleware
 │   ├── models/           # Mongoose schemas (User, Event, Booking)
-│   ├── routes/           # Express route definitions
+│   ├── routes/           # Express routes (authRoutes, eventRoutes, bookingRoutes, uploadRoutes)
+│   ├── uploads/          # Uploaded event banner assets
 │   ├── .env.example      # Backend environment template
-│   ├── seed.js           # Development mock data seeder
 │   ├── server.js         # Express app entry & database connection
 │   └── package.json
 ├── frontend/
 │   ├── src/
 │   │   ├── assets/       # Static branding assets
-│   │   ├── components/   # Reusable UI components (Navbar, Footer, Cards)
-│   │   ├── pages/        # Views (Home, Events, Booking, Organizer)
+│   │   ├── components/   # Reusable UI components (Navbar, Footer, EventCard, EventForm, etc.)
+│   │   ├── data/         # Static categories definition
+│   │   ├── pages/        # Views (Home, Events, EventDetails, Booking, MyBookings, Login, Register, Organizer)
 │   │   └── services/     # Axios client (api.js) & auth helpers (auth.js)
 │   ├── .env.example      # Frontend environment template
-│   ├── vercel.json       # SPA client-side route rewrite rule
+│   ├── vercel.json       # SPA client-side route rewrite rules
 │   ├── vite.config.js
 │   └── package.json
 └── README.md
@@ -60,106 +74,112 @@ Eventra/
 
 ---
 
-## Local Setup
+## 🚀 Getting Started
 
 ### 1. Prerequisites
 - **Node.js**: v20 or higher (`node -v`)
-- **MongoDB**: Local MongoDB instance or free MongoDB Atlas cluster
+- **MongoDB**: Local MongoDB instance or a free [MongoDB Atlas](https://www.mongodb.com/atlas) cluster
 
-### 2. Clone and Setup Backend
+---
+
+### 2. Backend Setup
 ```bash
 cd backend
 npm install
 cp .env.example .env
 ```
-Fill in `backend/.env`:
-| Variable | Description | Example / Default |
-| :--- | :--- | :--- |
-| `PORT` | Backend server port | `5000` |
-| `MONGODB_URI` | MongoDB connection string | `mongodb://localhost:27017/eventra` |
-| `JWT_SECRET` | Secret key for signing JWTs | `your_long_random_secret_here` |
-| `FRONTEND_URL` | Allowed client origin for CORS | `http://localhost:5173` |
 
-### 3. Setup Frontend
+Configure your `backend/.env` file:
+```env
+PORT=5000
+MONGODB_URI=mongodb+srv://<user>:<password>@cluster.mongodb.net/Eventra?retryWrites=true&w=majority
+JWT_SECRET=your_super_secret_jwt_key_here
+FRONTEND_URL=http://localhost:5173
+```
+
+Start the backend:
+```bash
+npm run dev
+# Server running on http://localhost:5000
+```
+
+---
+
+### 3. Frontend Setup
 ```bash
 cd ../frontend
 npm install
 cp .env.example .env
 ```
-Fill in `frontend/.env`:
-| Variable | Description | Example / Default |
-| :--- | :--- | :--- |
-| `VITE_API_URL` | Backend API base URL | `http://localhost:5000/api` |
+
+Configure your `frontend/.env` file:
+```env
+VITE_API_URL=http://localhost:5000/api
+```
+
+Start the frontend:
+```bash
+npm run dev
+# Application running on http://localhost:5173
+```
 
 ---
 
-## Run Commands
+## 📡 API Endpoints Reference
 
-| Task | Backend Command (`cd backend`) | Frontend Command (`cd frontend`) |
-| :--- | :--- | :--- |
-| **Development** | `npm run dev` (runs nodemon) | `npm run dev` (runs Vite dev server) |
-| **Production Start** | `npm start` (runs node server.js) | `npm run preview` (previews built dist) |
-| **Build** | _N/A_ | `npm run build` (outputs to `dist/`) |
-| **Lint** | `npm run lint` (eslint) | `npm run lint` (eslint) |
-| **Seed Dev DB** | `npm run seed` (local dev only) | _N/A_ |
-
----
-
-## API Endpoints
-
+### Authentication (`/api/auth`)
 | Method | Endpoint | Description | Access |
 | :--- | :--- | :--- | :--- |
-| `GET` | `/` | API Health Check | Public |
 | `POST` | `/api/auth/register` | Register new user or organizer | Public |
-| `POST` | `/api/auth/login` | Authenticate user & return JWT | Public |
-| `GET` | `/api/auth/me` | Fetch authenticated profile | Logged-in |
-| `GET` | `/api/events` | List all events (search/filter/page) | Public |
+| `POST` | `/api/auth/login` | Authenticate user & return JWT token | Public |
+| `GET` | `/api/auth/me` | Fetch authenticated user profile | Logged-in |
+
+### Events (`/api/events`)
+| Method | Endpoint | Description | Access |
+| :--- | :--- | :--- | :--- |
+| `GET` | `/api/events` | List all upcoming events | Public |
 | `GET` | `/api/events/:id` | Get single event details | Public |
-| `GET` | `/api/events/my-events` | List events created by organizer | Organizer |
-| `POST` | `/api/events` | Create new event | Organizer |
-| `PUT` | `/api/events/:id` | Update existing event | Organizer (Owner) |
-| `DELETE`| `/api/events/:id` | Delete event | Organizer (Owner) |
-| `POST` | `/api/bookings` | Book tickets for an event | Attendee (`user`) |
-| `GET` | `/api/bookings/my-bookings` | List user's ticket bookings | Attendee (`user`) |
-| `PUT` | `/api/bookings/:id/cancel` | Cancel booking & restore tickets | Attendee (Owner) |
+| `GET` | `/api/events/my-events` | List events created by authenticated organizer | Organizer |
+| `POST` | `/api/events` | Create a new event | Organizer |
+| `PUT` | `/api/events/:id` | Update an existing event | Organizer (Owner) |
+| `DELETE`| `/api/events/:id` | Delete an event | Organizer (Owner) |
+
+### Bookings (`/api/bookings`)
+| Method | Endpoint | Description | Access |
+| :--- | :--- | :--- | :--- |
+| `POST` | `/api/bookings` | Book tickets for an upcoming event (atomic deduction) | Logged-in |
+| `GET` | `/api/bookings/my-bookings` | Retrieve user's ticket booking history | Logged-in |
+| `PUT` | `/api/bookings/:id/cancel` | Cancel booking & release tickets back to inventory | Attendee (Owner) |
+| `GET` | `/api/bookings/organizer` | Fetch organizer sales metrics & ticket analytics | Organizer |
+
+### Uploads (`/api/upload`)
+| Method | Endpoint | Description | Access |
+| :--- | :--- | :--- | :--- |
+| `POST` | `/api/upload` | Upload & store event banner image | Organizer |
 
 ---
 
-## Deployment Notes
+## 🚢 Deployment Guide
 
-### 1. Database (MongoDB Atlas)
-- Create a free M0 cluster on MongoDB Atlas.
-- In **Network Access**, add `0.0.0.0/0` (Allow Access from Anywhere) so Render can connect.
-- In **Database Access**, create a user with read/write privileges.
-- Obtain the connection URI: `mongodb+srv://<user>:<password>@cluster.mongodb.net/eventra?retryWrites=true&w=majority`.
+### Backend (Render)
+1. Create a new **Web Service** on [Render](https://render.com/) linked to your GitHub repository.
+2. Set **Root Directory** to `backend`.
+3. Set **Build Command** to `npm install` and **Start Command** to `npm start`.
+4. Add Environment Variables:
+   - `PORT`: `5000`
+   - `MONGODB_URI`: Your MongoDB Atlas URI
+   - `JWT_SECRET`: A secure random secret string
+   - `FRONTEND_URL`: Your deployed frontend URL (e.g., `https://eventra.vercel.app`)
 
-### 2. Backend (Render)
-- Create a new **Web Service** on Render connected to your Git repository.
-- **Root Directory:** `backend`
-- **Build Command:** `npm install`
-- **Start Command:** `npm start`
-- **Environment Variables:**
-  - `PORT`: `5000` (or leave default, Render sets `PORT` automatically)
-  - `MONGODB_URI`: Atlas connection string
-  - `JWT_SECRET`: A secure, random string
-  - `FRONTEND_URL`: URL of your deployed Vercel frontend (e.g., `https://eventra.vercel.app`)
-- **Note on Free Tier:** Render spins down free web services after 15 minutes of inactivity. The first request after idle can take ~50 seconds to wake up (cold start).
-
-### 3. Frontend (Vercel)
-- Import your Git repository into Vercel.
-- **Root Directory:** `frontend`
-- **Framework Preset:** `Vite`
-- **Build Command:** `npm run build`
-- **Output Directory:** `dist`
-- **Environment Variables:**
-  - `VITE_API_URL`: Backend API URL (e.g., `https://eventra-api.onrender.com/api`)
-- **Important:** Vite environment variables (`VITE_*`) are embedded at **build time**. If you change your backend URL in Vercel settings, trigger a **Redeploy** to apply the new URL.
-- **Client Routing:** [`frontend/vercel.json`](file:///d:/project/Eventra/frontend/vercel.json) rewrites all incoming paths to `/index.html` to enable client-side React Router refreshing.
+### Frontend (Vercel)
+1. Import your repository into [Vercel](https://vercel.com/).
+2. Set **Root Directory** to `frontend`.
+3. Framework Preset: `Vite`.
+4. Environment Variables:
+   - `VITE_API_URL`: Your backend API URL (e.g., `https://eventra-api.onrender.com/api`)
+5. Click **Deploy**. *(The included `frontend/vercel.json` automatically handles client-side routing rewrites).*
 
 ---
 
-## Known Limitations
-
-- **Simulated Checkout:** Ticket booking simulates checkout and decrements seat inventory directly without an external payment gateway (e.g., Stripe/Razorpay).
-- **Notifications:** Confirmations and cancellations are tracked in the database and dashboard without external email (SMTP) or SMS integrations.
-- **Image URLs:** Event images use remote image URLs (e.g. Unsplash, Picsum) rather than a multipart file upload storage service (e.g., S3/Cloudinary).
+## 📄 License
+This project is open-source and available under the [ISC License](LICENSE).
