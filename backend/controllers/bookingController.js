@@ -36,12 +36,21 @@ const createBooking = async (req, res) => {
 
     const totalAmount = event.price * quantity;
 
-    const booking = await Booking.create({
-      user: req.user.userId,
-      event: eventId,
-      quantity,
-      totalAmount,
-    });
+    let booking;
+    try {
+      booking = await Booking.create({
+        user: req.user.userId,
+        event: eventId,
+        quantity,
+        totalAmount,
+      });
+    } catch (bookingError) {
+      // Rollback ticket decrement if booking document persistence fails
+      await Event.findByIdAndUpdate(eventId, {
+        $inc: { availableTickets: quantity },
+      });
+      throw bookingError;
+    }
 
     return res.status(201).json(booking);
   } catch (error) {
